@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class NoAnimationsTrial : MonoBehaviour {
     public bool waiting = false;
     public bool loading = false;
-    public bool started = false;
+    public bool running = false;
     private int d = 1;
     private int f = 2;
     private int j = 3;
@@ -23,10 +23,11 @@ public class NoAnimationsTrial : MonoBehaviour {
     public Animator anim;
     public static Stack<int> Pattern = new Stack<int>();
     public float trials;
-    public static long totalTrials;
+    public static long totalTrials = 0;
     public int answer;
     public int correct = 0;
     public Stopwatch timer;
+    public static long totalTime = 0;
 
     void Start () {
 		
@@ -41,9 +42,9 @@ public class NoAnimationsTrial : MonoBehaviour {
             Pattern.Push(k);
             Pattern.Push(f);
         }
-        answer = Pattern.Pop();
         trials = Pattern.Count;
         totalTrials = Pattern.Count;
+        answer = Pattern.Pop();
         timer = new Stopwatch();
         anim.SetInteger("Key", answer);
     }
@@ -52,7 +53,7 @@ public class NoAnimationsTrial : MonoBehaviour {
         float step = speed * Time.deltaTime;
         if (Pattern.Count != 0)
         {
-            if (!waiting && !loading && started)
+            if (!waiting && !loading && running)
             {
                 if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")))
                 {
@@ -85,7 +86,7 @@ public class NoAnimationsTrial : MonoBehaviour {
                     wrongAnswer();
                 }
             }
-            else if ((waiting) && (!loading) && started)
+            else if ((waiting) && (!loading) && running)
             {
                 obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
                 if (obstacles.transform.position.y == endPoint.position.y)
@@ -97,7 +98,7 @@ public class NoAnimationsTrial : MonoBehaviour {
                     obstacles.transform.position = startPoint.position;
                 }
             }
-            else if ((!waiting) && (loading) && started)
+            else if ((!waiting) && (loading) && running)
             {
                 obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, midPoint.position, step);
                 if ((obstacles.transform.position.y <= appearance) && timer.ElapsedMilliseconds == 0)
@@ -139,28 +140,109 @@ public class NoAnimationsTrial : MonoBehaviour {
                     }
                 }
             }
-            else if (!started)
+            else if (!running)
             {
-                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, midPoint.position, step);
-                if (obstacles.transform.position.y == midPoint.position.y)
-                {
-                    started = true;
-                }
-                else if ((obstacles.transform.position.y <= 4) && timer.ElapsedMilliseconds == 0)
-                    {
-                        timer.Start();
-                    }
+                running = true;
+                loading = true;
             }
         }
         else
         {
+            if (!waiting && !loading && running)
+            {
+                if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")))
+                {
+                    timer.Stop();
+                    car.SetInteger("Key", answer);
+                    endCorrectAnswer();
+                }
+                else if (Input.GetKeyDown("d"))
+                {
+                    timer.Stop();
+                    car.SetInteger("Key", d);
+                    endWrongAnswer();
+                }
+                else if (Input.GetKeyDown("f"))
+                {
+                    timer.Stop();
+                    car.SetInteger("Key", f);
+                    endWrongAnswer();
+                }
+                else if (Input.GetKeyDown("j"))
+                {
+                    timer.Stop();
+                    car.SetInteger("Key", j);
+                    endWrongAnswer();
+                }
+                else if (Input.GetKeyDown("k"))
+                {
+                    timer.Stop();
+                    car.SetInteger("Key", k);
+                    endWrongAnswer();
+                }
+            }
+            else if ((waiting) && (!loading) && running)
+            {
+                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
+                if (obstacles.transform.position.y == endPoint.position.y)
+                {
+                    waiting = false;
+                }
+            }
+            else if ((!waiting) && (loading) && running)
+            {
+                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, midPoint.position, step);
+                if ((obstacles.transform.position.y <= appearance) && timer.ElapsedMilliseconds == 0)
+                {
+                    timer.Start();
+                }
+                if (transform.position.y <= appearance)
+                {
+                    if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")))
+                    {
+                        timer.Stop();
+                        car.SetInteger("Key", answer);
+                        endEarlyCorrectAnswer();
+                    }
 
+                    else if (Input.GetKeyDown("d"))
+                    {
+                        timer.Stop();
+                        car.SetInteger("Key", d);
+                        endEarlyWrongAnswer();
+                    }
+                    else if (Input.GetKeyDown("f"))
+                    {
+                        timer.Stop();
+                        car.SetInteger("Key", f);
+                        endEarlyWrongAnswer();
+                    }
+                    else if (Input.GetKeyDown("j"))
+                    {
+                        timer.Stop();
+                        car.SetInteger("Key", j);
+                        endEarlyWrongAnswer();
+                    }
+                    else if (Input.GetKeyDown("k"))
+                    {
+                        timer.Stop();
+                        car.SetInteger("Key", k);
+                        endEarlyWrongAnswer();
+                    }
+                }
+            }
+            else if (!running)
+            {
+                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
+
+            }
         }
 
 	}
     void correctAnswer()
     {
         correct += 1;
+        totalTime = totalTime + timer.ElapsedMilliseconds;
         waiting = true;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
         timer = new Stopwatch();
@@ -168,6 +250,7 @@ public class NoAnimationsTrial : MonoBehaviour {
     void wrongAnswer()
     {
         waiting = true;
+        totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
         StartCoroutine(wait());
 
@@ -175,6 +258,7 @@ public class NoAnimationsTrial : MonoBehaviour {
     void earlyCorrectAnswer()
     {
         correct += 1;
+        totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
         waiting = true;
         loading = false;
@@ -184,8 +268,53 @@ public class NoAnimationsTrial : MonoBehaviour {
     {
         waiting = true;
         loading = false;
+        totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
         StartCoroutine(wait());
+
+    }
+    void endCorrectAnswer()
+    {
+        correct += 1;
+        waiting = true;
+        totalTime = totalTime + timer.ElapsedMilliseconds;
+        UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
+        UnityEngine.Debug.Log((correct / trials) * 100 + "% correct");
+        UnityEngine.Debug.Log((totalTime / totalTrials) + " = Average response time");
+        running = false;
+    }
+    void endWrongAnswer()
+    {
+        waiting = true;
+        totalTime = totalTime + timer.ElapsedMilliseconds;
+        UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
+        StartCoroutine(wait());
+        UnityEngine.Debug.Log((correct / trials) * 100 + "% correct");
+        UnityEngine.Debug.Log((totalTime / totalTrials) + " = Average response time");
+        running = false;
+
+    }
+    void endEarlyCorrectAnswer()
+    {
+        correct += 1;
+        totalTime = totalTime + timer.ElapsedMilliseconds;
+        UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
+        UnityEngine.Debug.Log((correct / trials) * 100 + "% correct");
+        UnityEngine.Debug.Log((totalTime / totalTrials) + " = Average response time");
+        waiting = true;
+        loading = false;
+        running = false;
+    }
+    void endEarlyWrongAnswer()
+    {
+        waiting = true;
+        loading = false;
+        totalTime = totalTime + timer.ElapsedMilliseconds;
+        StartCoroutine(wait());
+        UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
+        UnityEngine.Debug.Log((correct / trials) * 100 + "% correct");
+        UnityEngine.Debug.Log((totalTime / totalTrials) + " = Average response time");
+        running = false;
 
     }
     IEnumerator wait()

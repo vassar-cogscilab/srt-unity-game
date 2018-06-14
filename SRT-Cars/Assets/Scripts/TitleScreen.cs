@@ -17,7 +17,7 @@ public class TitleScreen : MonoBehaviour {
     {
         new Rect(Screen.width / 2, Screen.height / 2, Screen.width / 4, Screen.height / 4);
 
-        if (GUI.Button(new Rect(Screen.width/2, Screen.height/2, Screen.width/8, Screen.height/8), "Play", guiStyle))
+        if (GUI.Button(new Rect(10, 10, 100, 50), "Play", guiStyle))
         {
             SceneManager.LoadScene(level);
         }
