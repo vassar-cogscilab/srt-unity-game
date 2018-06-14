@@ -19,6 +19,7 @@ public class NoAnimationsTrial : MonoBehaviour {
     public Transform midPoint;
     public float speed = 5;
 
+    public Animator car;
     public Animator anim;
     public static Stack<int> Pattern = new Stack<int>();
     public float trials;
@@ -35,10 +36,10 @@ public class NoAnimationsTrial : MonoBehaviour {
         obstacles.transform.position = startPoint.position;
         for (int i = 0; i < 5; i++)
         {
-            Pattern.Push(1);
-            Pattern.Push(3);
-            Pattern.Push(4);
-            Pattern.Push(2);
+            Pattern.Push(d);
+            Pattern.Push(j);
+            Pattern.Push(k);
+            Pattern.Push(f);
         }
         answer = Pattern.Pop();
         trials = Pattern.Count;
@@ -53,14 +54,34 @@ public class NoAnimationsTrial : MonoBehaviour {
         {
             if (!waiting && !loading && started)
             {
-                if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer ==k) && Input.GetKeyDown("k")))
+                if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")))
                 {
                     timer.Stop();
+                    car.SetInteger("Key", answer);
                     correctAnswer();
                 }
-                else if (Input.GetKeyDown("d") || Input.GetKeyDown("f") || Input.GetKeyDown("j") || Input.GetKeyDown("k"))
+                else if (Input.GetKeyDown("d"))
                 {
                     timer.Stop();
+                    car.SetInteger("Key", d);
+                    wrongAnswer();
+                }
+                else if (Input.GetKeyDown("f"))
+                {
+                    timer.Stop();
+                    car.SetInteger("Key", f);
+                    wrongAnswer();
+                }
+                else if (Input.GetKeyDown("j"))
+                {
+                    timer.Stop();
+                    car.SetInteger("Key", j);
+                    wrongAnswer();
+                }
+                else if (Input.GetKeyDown("k"))
+                {
+                    timer.Stop();
+                    car.SetInteger("Key", k);
                     wrongAnswer();
                 }
             }
@@ -85,29 +106,37 @@ public class NoAnimationsTrial : MonoBehaviour {
                 }
                 if (transform.position.y <= appearance)
                 {
-                   if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")))
-                   {
+                    if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")))
+                    {
                         timer.Stop();
-                        correctAnswer();
-                   }
-                    timer.Stop();
-                    correct += 1;
-                    UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-                    waiting = true;
-                    loading = false;
-                    timer = new Stopwatch();
-                }
-                else if (answer != d && Input.GetKeyDown("d") && transform.position.y <= appearance)
-                {
-                    timer.Stop();
-                    UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-                    waiting = true;
-                    loading = false;
-                    timer = new Stopwatch();
-                }
-                else if (obstacles.transform.position.y <= midPoint.position.y)
-                {
-                    loading = false;
+                        car.SetInteger("Key", answer);
+                        earlyCorrectAnswer();
+                    }
+                
+                    else if (Input.GetKeyDown("d"))
+                    {
+                        timer.Stop();
+                        car.SetInteger("Key", d);
+                        earlyWrongAnswer();
+                    }
+                    else if (Input.GetKeyDown("f"))
+                    {
+                        timer.Stop();
+                        car.SetInteger("Key", f);
+                        earlyWrongAnswer();
+                    }
+                    else if (Input.GetKeyDown("j"))
+                    {
+                        timer.Stop();
+                        car.SetInteger("Key", j);
+                        earlyWrongAnswer();
+                    }
+                    else if (Input.GetKeyDown("k"))
+                    {
+                        timer.Stop();
+                        car.SetInteger("Key", k);
+                        earlyWrongAnswer();
+                    }
                 }
             }
             else if (!started)
@@ -140,7 +169,8 @@ public class NoAnimationsTrial : MonoBehaviour {
     {
         waiting = true;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        timer = new Stopwatch();
+        StartCoroutine(wait());
+
     }
     void earlyCorrectAnswer()
     {
@@ -148,6 +178,20 @@ public class NoAnimationsTrial : MonoBehaviour {
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
         waiting = true;
         loading = false;
+        timer = new Stopwatch();
+    }
+    void earlyWrongAnswer()
+    {
+        waiting = true;
+        loading = false;
+        UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
+        StartCoroutine(wait());
+
+    }
+    IEnumerator wait()
+    {
+        yield return new WaitForSecondsRealtime(.25f);
+        car.SetInteger("Key", answer);
         timer = new Stopwatch();
     }
 }

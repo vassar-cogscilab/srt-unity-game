@@ -716,9 +716,11 @@ MonoBehaviour:
   startPoint: {fileID: 396239129}
   midPoint: {fileID: 1800884563}
   speed: 5
+  car: {fileID: 1289375349}
   anim: {fileID: 1625503601}
   trials: 0
   answer: 0
+  correct: 0
 --- !u!212 &1625503599
 SpriteRenderer:
   m_ObjectHideFlags: 0
