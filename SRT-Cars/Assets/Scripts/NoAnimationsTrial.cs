@@ -18,6 +18,10 @@ public class NoAnimationsTrial : MonoBehaviour {
     public Transform startPoint;
     public Transform midPoint;
     public float speed = 5;
+    public Button startButton;
+    public Text responseTime;
+    public Text percentCorrect;
+    public GameObject endPanel;
 
     public Animator car;
     public Animator anim;
@@ -35,7 +39,7 @@ public class NoAnimationsTrial : MonoBehaviour {
     private void Awake()
     {
         obstacles.transform.position = startPoint.position;
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 1; i++)
         {
             Pattern.Push(d);
             Pattern.Push(j);
@@ -47,6 +51,7 @@ public class NoAnimationsTrial : MonoBehaviour {
         answer = Pattern.Pop();
         timer = new Stopwatch();
         anim.SetInteger("Key", answer);
+        startButton.onClick.AddListener(beginLevel);
     }
     // Update is called once per frame
     void Update () {
@@ -140,11 +145,11 @@ public class NoAnimationsTrial : MonoBehaviour {
                     }
                 }
             }
-            else if (!running)
-            {
-                running = true;
-                loading = true;
-            }
+           // else if (!running && startButton)
+           // {
+           //     running = true;
+           //     loading = true;
+           // }
         }
         else
         {
@@ -279,8 +284,11 @@ public class NoAnimationsTrial : MonoBehaviour {
         waiting = true;
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        UnityEngine.Debug.Log((correct / trials) * 100 + "% correct");
-        UnityEngine.Debug.Log((totalTime / totalTrials) + " = Average response time");
+        responseTime.text = ((correct / trials) * 100 + "% correct");
+        percentCorrect.text = ((totalTime / totalTrials) + " = Average response time");
+        endPanel.SetActive(true);
+        UnityEngine.Debug.Log(responseTime.text);
+        UnityEngine.Debug.Log(percentCorrect.text);
         running = false;
     }
     void endWrongAnswer()
@@ -289,8 +297,11 @@ public class NoAnimationsTrial : MonoBehaviour {
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
         StartCoroutine(wait());
-        UnityEngine.Debug.Log((correct / trials) * 100 + "% correct");
-        UnityEngine.Debug.Log((totalTime / totalTrials) + " = Average response time");
+        responseTime.text = ((correct/trials) *100 + "% correct");
+        percentCorrect.text = ((totalTime / totalTrials) + " = Average response time");
+        endPanel.SetActive(true);
+        UnityEngine.Debug.Log(responseTime.text);
+        UnityEngine.Debug.Log(percentCorrect.text);
         running = false;
 
     }
@@ -299,8 +310,11 @@ public class NoAnimationsTrial : MonoBehaviour {
         correct += 1;
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        UnityEngine.Debug.Log((correct / trials) * 100 + "% correct");
-        UnityEngine.Debug.Log((totalTime / totalTrials) + " = Average response time");
+        responseTime.text = ((correct / trials) * 100 + "% correct");
+        percentCorrect.text = ((totalTime / totalTrials) + " = Average response time");
+        endPanel.SetActive(true);
+        UnityEngine.Debug.Log(responseTime.text);
+        UnityEngine.Debug.Log(percentCorrect.text);
         waiting = true;
         loading = false;
         running = false;
@@ -312,8 +326,11 @@ public class NoAnimationsTrial : MonoBehaviour {
         totalTime = totalTime + timer.ElapsedMilliseconds;
         StartCoroutine(wait());
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        UnityEngine.Debug.Log((correct / trials) * 100 + "% correct");
-        UnityEngine.Debug.Log((totalTime / totalTrials) + " = Average response time");
+        responseTime.text = ((correct / trials) * 100 + "% correct");
+        percentCorrect.text = ((totalTime / totalTrials) + " = Average response time");
+        endPanel.SetActive(true);
+        UnityEngine.Debug.Log(responseTime.text);
+        UnityEngine.Debug.Log(percentCorrect.text);
         running = false;
 
     }
@@ -322,5 +339,10 @@ public class NoAnimationsTrial : MonoBehaviour {
         yield return new WaitForSecondsRealtime(.25f);
         car.SetInteger("Key", answer);
         timer = new Stopwatch();
+    }
+    void beginLevel()
+    {
+        running = true;
+        loading = true;
     }
 }
