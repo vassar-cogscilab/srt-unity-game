@@ -22,10 +22,10 @@ public class NoAnimationsTrial : MonoBehaviour {
     public Text responseTime;
     public Text percentCorrect;
     public GameObject endPanel;
-
     public Animator car;
     public Animator anim;
     public Animator startingAnimation;
+    public Animator road;
     public static Stack<int> Pattern = new Stack<int>();
     public float trials;
     public static long totalTrials = 0;
@@ -94,6 +94,7 @@ public class NoAnimationsTrial : MonoBehaviour {
             }
             else if ((waiting) && (!loading) && running)
             {
+                road.SetBool("Speeding", true);
                 obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
                 if (obstacles.transform.position.y == endPoint.position.y)
                 {
@@ -110,6 +111,10 @@ public class NoAnimationsTrial : MonoBehaviour {
                 if ((obstacles.transform.position.y <= appearance) && timer.ElapsedMilliseconds == 0)
                 {
                     timer.Start();
+                }
+                if(obstacles.transform.position.y == midPoint.position.y)
+                {
+                    road.SetBool("Speeding", false);
                 }
                 if (transform.position.y <= appearance)
                 {
@@ -146,16 +151,12 @@ public class NoAnimationsTrial : MonoBehaviour {
                     }
                 }
             }
-           // else if (!running && startButton)
-           // {
-           //     running = true;
-           //     loading = true;
-           // }
         }
         else
         {
             if (!waiting && !loading && running)
             {
+                road.SetBool("Speeding", false);
                 if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")))
                 {
                     timer.Stop();
@@ -189,6 +190,7 @@ public class NoAnimationsTrial : MonoBehaviour {
             }
             else if ((waiting) && (!loading) && running)
             {
+                road.SetBool("Speeding", true);
                 obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
                 if (obstacles.transform.position.y == endPoint.position.y)
                 {
@@ -197,6 +199,7 @@ public class NoAnimationsTrial : MonoBehaviour {
             }
             else if ((!waiting) && (loading) && running)
             {
+                road.SetBool("Speeding", true);
                 obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, midPoint.position, step);
                 if ((obstacles.transform.position.y <= appearance) && timer.ElapsedMilliseconds == 0)
                 {
@@ -239,6 +242,7 @@ public class NoAnimationsTrial : MonoBehaviour {
             }
             else if (!running)
             {
+                road.SetBool("Speeding", true);
                 obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
 
             }
@@ -281,58 +285,56 @@ public class NoAnimationsTrial : MonoBehaviour {
     }
     void endCorrectAnswer()
     {
+        running = false;
         correct += 1;
-        waiting = true;
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
         responseTime.text = ((correct / trials) * 100 + "% correct");
         percentCorrect.text = ((totalTime / totalTrials) + " = Average response time");
+        new WaitForSecondsRealtime(1);
         endPanel.SetActive(true);
         UnityEngine.Debug.Log(responseTime.text);
         UnityEngine.Debug.Log(percentCorrect.text);
-        running = false;
     }
     void endWrongAnswer()
     {
-        waiting = true;
+        running = false;
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
         StartCoroutine(wait());
         responseTime.text = ((correct/trials) *100 + "% correct");
         percentCorrect.text = ((totalTime / totalTrials) + " = Average response time");
+        new WaitForSecondsRealtime(1);
         endPanel.SetActive(true);
         UnityEngine.Debug.Log(responseTime.text);
         UnityEngine.Debug.Log(percentCorrect.text);
-        running = false;
 
     }
     void endEarlyCorrectAnswer()
     {
+        running = false;
         correct += 1;
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
         responseTime.text = ((correct / trials) * 100 + "% correct");
         percentCorrect.text = ((totalTime / totalTrials) + " = Average response time");
+        new WaitForSecondsRealtime(1);
         endPanel.SetActive(true);
         UnityEngine.Debug.Log(responseTime.text);
         UnityEngine.Debug.Log(percentCorrect.text);
-        waiting = true;
-        loading = false;
-        running = false;
     }
     void endEarlyWrongAnswer()
     {
-        waiting = true;
-        loading = false;
+        running = false;
         totalTime = totalTime + timer.ElapsedMilliseconds;
         StartCoroutine(wait());
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
         responseTime.text = ((correct / trials) * 100 + "% correct");
         percentCorrect.text = ((totalTime / totalTrials) + " = Average response time");
+        new WaitForSecondsRealtime(1);
         endPanel.SetActive(true);
         UnityEngine.Debug.Log(responseTime.text);
         UnityEngine.Debug.Log(percentCorrect.text);
-        running = false;
 
     }
     IEnumerator wait()

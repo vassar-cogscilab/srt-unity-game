@@ -1,11 +1,17 @@
 fileFormatVersion: 2
-guid: 993a489403a925346a58bc40d87970d4
-timeCreated: 1528731073
+guid: cae088aeb99c6c54b8f9600cc07e2f7e
+timeCreated: 1529088601
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: Road 1_0
-    21300002: Road 1_1
+    21300000: new road_0
+    21300002: new road_1
+    21300004: new road_2
+    21300006: new road_3
+    21300008: new road_4
+    21300010: new road_5
+    21300012: new road_6
+    21300014: new road_7
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -92,7 +98,49 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Road 1_0
+      name: new road_0
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 665
+        width: 320
+        height: 320
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: new road_1
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 665
+        width: 320
+        height: 320
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: new road_2
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 665
+        width: 320
+        height: 320
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: new road_3
       rect:
         serializedVersion: 2
         x: 5
@@ -106,10 +154,52 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: Road 1_1
+      name: new road_4
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 335
+        width: 320
+        height: 320
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: new road_5
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 335
+        width: 320
+        height: 320
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: new road_6
       rect:
         serializedVersion: 2
         x: 5
+        y: 5
+        width: 320
+        height: 320
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: new road_7
+      rect:
+        serializedVersion: 2
+        x: 335
         y: 5
         width: 320
         height: 320
