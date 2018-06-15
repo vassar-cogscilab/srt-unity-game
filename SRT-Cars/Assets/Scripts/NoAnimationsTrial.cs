@@ -25,6 +25,7 @@ public class NoAnimationsTrial : MonoBehaviour {
 
     public Animator car;
     public Animator anim;
+    public Animator startingAnimation;
     public static Stack<int> Pattern = new Stack<int>();
     public float trials;
     public static long totalTrials = 0;
@@ -39,7 +40,7 @@ public class NoAnimationsTrial : MonoBehaviour {
     private void Awake()
     {
         obstacles.transform.position = startPoint.position;
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 5; i++)
         {
             Pattern.Push(d);
             Pattern.Push(j);
@@ -342,6 +343,17 @@ public class NoAnimationsTrial : MonoBehaviour {
     }
     void beginLevel()
     {
+        StartCoroutine(begining());
+    }
+    IEnumerator begining()
+    {
+        startingAnimation.SetInteger("seconds", 3);
+        yield return new WaitForSecondsRealtime(1);
+        startingAnimation.SetInteger("seconds", 2);
+        yield return new WaitForSecondsRealtime(1);
+        startingAnimation.SetInteger("seconds", 1);
+        yield return new WaitForSecondsRealtime(1);
+        startingAnimation.SetInteger("seconds", 0);
         running = true;
         loading = true;
     }
