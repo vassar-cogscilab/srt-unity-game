@@ -1189,7 +1189,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 994323747}
-  - component: {fileID: 994323746}
   - component: {fileID: 994323748}
   m_Layer: 0
   m_Name: GameController
@@ -1198,35 +1197,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &994323746
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 994323745}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e66d596b7db102e4083d12895e44cc67, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  waiting: 0
-  loading: 0
-  running: 0
-  obstacles: {fileID: 1625503597}
-  endPoint: {fileID: 1214345210}
-  startPoint: {fileID: 396239129}
-  midPoint: {fileID: 1800884563}
-  startButton: {fileID: 822285239}
-  responseTime: {fileID: 103821876}
-  percentCorrect: {fileID: 2058354911}
-  endPanel: {fileID: 2131875277}
-  car: {fileID: 1289375349}
-  anim: {fileID: 1625503601}
-  startingAnimation: {fileID: 1853713209}
-  road: {fileID: 0}
-  trials: 0
-  answer: 0
-  correct: 0
 --- !u!4 &994323747
 Transform:
   m_ObjectHideFlags: 0
