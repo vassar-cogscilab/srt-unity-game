@@ -43,7 +43,6 @@ public class NoAnimationsTrial : MonoBehaviour {
 	}
     private void Awake()
     {
-        road.speed = 10;
         obstacles.transform.position = startPoint.position;
         for (int i = 0; i < 5; i++)
         {
