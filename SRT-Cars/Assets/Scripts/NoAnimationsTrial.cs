@@ -35,7 +35,7 @@ public class NoAnimationsTrial : MonoBehaviour {
     public Stopwatch timer;
     public static long totalTime = 0;
     private int maxSpeed = 10;
-    private int minSpeed = 4;
+    private int minSpeed = 6;
     private float speedChange = .2f;
 
     void Start () {
@@ -116,7 +116,7 @@ public class NoAnimationsTrial : MonoBehaviour {
             }
             else if ((!waiting) && (loading) && running)
             {
-                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, midPoint.position, step);
+                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
                 if ((obstacles.transform.position.y <= appearance) && timer.ElapsedMilliseconds == 0)
                 {
                     timer.Start();

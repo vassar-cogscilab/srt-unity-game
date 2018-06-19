@@ -13,15 +13,16 @@ public class Trial2 : MonoBehaviour
     private int f = 2;
     private int j = 3;
     private int k = 4;
-    private float appearance = 3.5f;
+    public float appearance = 3.8f;
     public GameObject obstacles;
     public GameObject lines;
-    public Transform endPoint;
     public Transform startPoint;
+    public Transform restartPoint;
     public Transform midPoint;
+    public Transform endPoint;
     public Transform lineStart;
     public Transform lineEnd;
-    private float speed = 4;
+    public float speed;
     public Button startButton;
     public Text responseTime;
     public Text percentCorrect;
@@ -33,22 +34,21 @@ public class Trial2 : MonoBehaviour
     public float trials;
     public static long totalTrials = 0;
     public int answer;
-    public int correct = 0;
+    public int wrong = 0;
     public Stopwatch timer;
     public static long totalTime = 0;
-    public float road = 10;
-    private int maxSpeed = 10;
-    private int minSpeed = 6;
-    private float speedChange = .05f;
+    public float road;
+    public float wrongSpeed;
+    public int maxSpeed = 14;
+    public int minSpeed = 6;
+    public float speedChange = .25f;
+    public int brakeSpeed;
+    public bool restarting = false;
 
-    void Start()
-    {
-
-    }
     private void Awake()
     {
         obstacles.transform.position = startPoint.position;
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 1; i++)
         {
             Pattern.Push(d);
             Pattern.Push(j);
@@ -61,10 +61,15 @@ public class Trial2 : MonoBehaviour
         timer = new Stopwatch();
         anim.SetInteger("Key", answer);
         startButton.onClick.AddListener(beginLevel);
-    }
+        road = maxSpeed;
+        speed = maxSpeed - minSpeed+ 1;
+        wrongSpeed = 1;
+        brakeSpeed = 2;
+}
     // Update is called once per frame
     void Update()
     {
+        float wrongStep = wrongSpeed * Time.deltaTime;
         float step = speed * Time.deltaTime;
         float lineStep = road * Time.deltaTime;
 
@@ -95,99 +100,81 @@ public class Trial2 : MonoBehaviour
             }
             else if ((!waiting) && (loading) && running)
             {
-                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, midPoint.position, step);
-                if ((obstacles.transform.position.y <= appearance) && timer.ElapsedMilliseconds == 0)
+                if (restarting)
                 {
-                    timer.Start();
-                }
-                //if(obstacles.transform.position.y == midPoint.position.y)
-                //{
-                // road.SetBool("Speeding", false);
-                if (road > minSpeed)
-                {
-                    road -= speedChange;
-                    speed -= speedChange;
-                }
-                // }
-                if (obstacles.transform.position.y <= appearance)
-                {
-                    if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")))
+                    if (road > brakeSpeed)
                     {
-                        timer.Stop();
-                        car.SetInteger("Key", answer);
-                        earlyCorrectAnswer();
+                        road -= speedChange;
+                        wrongSpeed += speedChange;
                     }
+                    obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, restartPoint.position, wrongStep);
+                    if (obstacles.transform.position.y == restartPoint.position.y)
+                    {
+                        road = minSpeed;
+                        restarting = false;
+                    }
+                }
+                else if (!restarting)
+                {
+                    obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, midPoint.position, step);
 
-                    else if (Input.GetKeyDown("d"))
+                    if ((obstacles.transform.position.y <= appearance) && timer.ElapsedMilliseconds == 0)
                     {
-                        timer.Stop();
-                        car.SetInteger("Key", d);
-                        earlyWrongAnswer();
+                        timer.Start();
                     }
-                    else if (Input.GetKeyDown("f"))
+                    //if(obstacles.transform.position.y == midPoint.position.y)
+                    //{
+                    // road.SetBool("Speeding", false);
+                    if (road > minSpeed)
                     {
-                        timer.Stop();
-                        car.SetInteger("Key", f);
-                        earlyWrongAnswer();
+                        road -= speedChange;
+                        speed -= speedChange;
                     }
-                    else if (Input.GetKeyDown("j"))
+                    // }
+                    if (obstacles.transform.position.y <= appearance)
                     {
-                        timer.Stop();
-                        car.SetInteger("Key", j);
-                        earlyWrongAnswer();
-                    }
-                    else if (Input.GetKeyDown("k"))
-                    {
-                        timer.Stop();
-                        car.SetInteger("Key", k);
-                        earlyWrongAnswer();
+                        if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")))
+                        {
+                            timer.Stop();
+                            car.SetInteger("Key", answer);
+                            correctAnswer();
+                        }
+
+                        else if (Input.GetKeyDown("d"))
+                        {
+                            car.SetInteger("Key", d);
+                            wrongAnswer();
+                        }
+                        else if (Input.GetKeyDown("f"))
+                        {
+                            car.SetInteger("Key", f);
+                            wrongAnswer();
+                        }
+                        else if (Input.GetKeyDown("j"))
+                        {
+                            car.SetInteger("Key", j);
+                            wrongAnswer();
+                        }
+                        else if (Input.GetKeyDown("k"))
+                        {
+                            car.SetInteger("Key", k);
+                            wrongAnswer();
+                        }
+                        else if (obstacles.transform.position.y == midPoint.position.y)
+                        {
+                            restarting = true;
+                            wrongSpeed = 1;
+                            wrongAnswer();
+                        }
                     }
                 }
             }
         }
         else
         {
-            if (!waiting && !loading && running)
+            if ((waiting) && (!loading) && running)
             {
-                // road.SetBool("Speeding", false);
-                if (road > minSpeed)
-                {
-                    road -= speedChange;
-                    speed -= speedChange;
-                }
-                if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")))
-                {
-                    timer.Stop();
-                    car.SetInteger("Key", answer);
-                    endCorrectAnswer();
-                }
-                else if (Input.GetKeyDown("d"))
-                {
-                    timer.Stop();
-                    car.SetInteger("Key", d);
-                    endWrongAnswer();
-                }
-                else if (Input.GetKeyDown("f"))
-                {
-                    timer.Stop();
-                    car.SetInteger("Key", f);
-                    endWrongAnswer();
-                }
-                else if (Input.GetKeyDown("j"))
-                {
-                    timer.Stop();
-                    car.SetInteger("Key", j);
-                    endWrongAnswer();
-                }
-                else if (Input.GetKeyDown("k"))
-                {
-                    timer.Stop();
-                    car.SetInteger("Key", k);
-                    endWrongAnswer();
-                }
-            }
-            else if ((waiting) && (!loading) && running)
-            {
+
                 //road.SetBool("Speeding", true);
                 if (road < maxSpeed)
                 {
@@ -202,13 +189,25 @@ public class Trial2 : MonoBehaviour
             }
             else if ((!waiting) && (loading) && running)
             {
+                if (!restarting)
+                {
+                    obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, midPoint.position, step);
+                }
+                if (restarting)
+                {
+                    obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, restartPoint.position, wrongStep);
+                    if (obstacles.transform.position.y == restartPoint.position.y)
+                    {
+                        road = minSpeed;
+                        restarting = false;
+                    }
+                }
                 //road.SetBool("Speeding", true);
                 if (road > minSpeed)
                 {
                     road -= speedChange;
                     speed -= speedChange;
                 }
-                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, midPoint.position, step);
                 if ((obstacles.transform.position.y <= appearance) && timer.ElapsedMilliseconds == 0)
                 {
                     timer.Start();
@@ -219,32 +218,28 @@ public class Trial2 : MonoBehaviour
                     {
                         timer.Stop();
                         car.SetInteger("Key", answer);
-                        endEarlyCorrectAnswer();
+                        endCorrectAnswer();
                     }
 
                     else if (Input.GetKeyDown("d"))
                     {
-                        timer.Stop();
                         car.SetInteger("Key", d);
-                        endEarlyWrongAnswer();
+                        endWrongAnswer();
                     }
                     else if (Input.GetKeyDown("f"))
                     {
-                        timer.Stop();
                         car.SetInteger("Key", f);
-                        endEarlyWrongAnswer();
+                        endWrongAnswer();
                     }
                     else if (Input.GetKeyDown("j"))
                     {
-                        timer.Stop();
                         car.SetInteger("Key", j);
-                        endEarlyWrongAnswer();
+                        endWrongAnswer();
                     }
                     else if (Input.GetKeyDown("k"))
                     {
-                        timer.Stop();
                         car.SetInteger("Key", k);
-                        endEarlyWrongAnswer();
+                        endWrongAnswer();
                     }
                 }
             }
@@ -262,87 +257,41 @@ public class Trial2 : MonoBehaviour
         }
 
     }
+
     void correctAnswer()
     {
-        correct += 1;
         totalTime = totalTime + timer.ElapsedMilliseconds;
-        waiting = true;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
+        waiting = true;
+        loading = false;
         timer = new Stopwatch();
     }
     void wrongAnswer()
     {
-        waiting = true;
-        totalTime = totalTime + timer.ElapsedMilliseconds;
-        UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        StartCoroutine(wait());
+        trials += 1;
+        
 
     }
-    void earlyCorrectAnswer()
-    {
-        correct += 1;
-        totalTime = totalTime + timer.ElapsedMilliseconds;
-        UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        waiting = true;
-        loading = false;
-        timer = new Stopwatch();
-    }
-    void earlyWrongAnswer()
-    {
-        waiting = true;
-        loading = false;
-        totalTime = totalTime + timer.ElapsedMilliseconds;
-        UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        StartCoroutine(wait());
-
-    }
+    
     void endCorrectAnswer()
     {
         running = false;
-        correct += 1;
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        responseTime.text = ((correct / trials) * 100 + "% correct");
+        responseTime.text = ((totalTrials/trials) * 100 + "% correct");
         percentCorrect.text = ((totalTime / totalTrials) + " = Average response time");
         StartCoroutine(ending());
     }
     void endWrongAnswer()
     {
         running = false;
+        trials += 1; 
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        StartCoroutine(wait());
-        responseTime.text = ((correct / trials) * 100 + "% correct");
+        responseTime.text = (((totalTrials) / trials) * 100 + "% correct");
         percentCorrect.text = ((totalTime / totalTrials) + " = Average response time");
         StartCoroutine(ending());
 
-    }
-    void endEarlyCorrectAnswer()
-    {
-        running = false;
-        correct += 1;
-        totalTime = totalTime + timer.ElapsedMilliseconds;
-        UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        responseTime.text = ((correct / trials) * 100 + "% correct");
-        percentCorrect.text = ((totalTime / totalTrials) + " = Average response time");
-        StartCoroutine(ending());
-    }
-    void endEarlyWrongAnswer()
-    {
-        running = false;
-        totalTime = totalTime + timer.ElapsedMilliseconds;
-        StartCoroutine(wait());
-        UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        responseTime.text = ((correct / trials) * 100 + "% correct");
-        percentCorrect.text = ((totalTime / totalTrials) + " = Average response time");
-        StartCoroutine(ending());
-
-    }
-    IEnumerator wait()
-    {
-        yield return new WaitForSecondsRealtime(.25f);
-        car.SetInteger("Key", answer);
-        timer = new Stopwatch();
     }
     void beginLevel()
     {

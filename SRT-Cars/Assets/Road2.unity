@@ -1224,6 +1224,7 @@ MonoBehaviour:
   waiting: 0
   loading: 0
   running: 0
+  appearance: 3.8
   obstacles: {fileID: 1625503597}
   lines: {fileID: 1502003397}
   endPoint: {fileID: 1214345210}
@@ -1231,6 +1232,7 @@ MonoBehaviour:
   midPoint: {fileID: 1800884563}
   lineStart: {fileID: 233175702}
   lineEnd: {fileID: 78026426}
+  speed: 0
   startButton: {fileID: 822285239}
   responseTime: {fileID: 103821876}
   percentCorrect: {fileID: 2058354911}
@@ -1242,6 +1244,9 @@ MonoBehaviour:
   answer: 0
   correct: 0
   road: 10
+  maxSpeed: 14
+  minSpeed: 6
+  speedChange: 0.25
 --- !u!1 &1214345209
 GameObject:
   m_ObjectHideFlags: 0
@@ -1424,7 +1429,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 3978e43f8bc257945a7e6288ecdf8457, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ed720678265217d42937fe39fc821735, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1773,7 +1778,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1800884562}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 970911442}
