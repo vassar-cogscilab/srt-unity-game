@@ -9,14 +9,6 @@ public class Trial3 : MonoBehaviour
     public bool waiting = false;
     public bool loading = false;
     public bool running = false;
-    private int g = 0;
-    private int h = 1;
-    private int f = 2;
-    private int j = 3;
-    private int d = 4;
-    private int k = 5;
-    private int s = 6;
-    private int l = 7;
     public float appearance;
     public GameObject obstacles;
     public GameObject lines;
@@ -69,10 +61,11 @@ public class Trial3 : MonoBehaviour
     private SpriteRenderer sRender;
     public string[] keys;
     public string[] posKeys;
+    private int j;
 
     private void Awake()
     {
-        keys = new string[] { "g", "h", "f", "j", "d", "k", "s", "l" };
+        keys = new string[] { "s", "d", "f", "g", "h", "j", "k", "l" };
         lanes = 6;
         posKeys = new string[lanes];
         float camHeight = cam.orthographicSize * 1.9f;
@@ -83,20 +76,37 @@ public class Trial3 : MonoBehaviour
         midSpeed = 11;
         minSpeed = 2;
         speedChange = .5f;
-        shiftSpeed = 12;
+        shiftSpeed = 20;
         obstacles.transform.position = startPoint.position;
         carz = new GameObject[lanes];
         shift = new GameObject[lanes];
         for (int i = 0; i < 5; i++)
         {
-            Pattern.Push(d);
-            Pattern.Push(j);
-            Pattern.Push(k);
-            Pattern.Push(f);
+            Pattern.Push(1);
+            Pattern.Push(0);
+            Pattern.Push(4);
+            Pattern.Push(5);
         }
-        for(int i = 0; i<lanes; i++)
+        if (lanes <= 2)
         {
-            posKeys[i] = keys[i];
+            j = 3;
+        }
+        else if (lanes <= 4)
+        {
+            j = 2;
+        }
+        else if (lanes <= 6)
+        {
+            j = 1;
+        }
+        else
+        {
+            j = 0;
+        }
+        for (int i = 0; i<lanes; i++)
+        { 
+            posKeys[i] = keys[j];
+            j++;
         }
             for (float i = 0 - ((lanes) / 2f); i <= ((lanes) / 2f); i++)
             {
@@ -132,6 +142,7 @@ public class Trial3 : MonoBehaviour
         startButton.onClick.AddListener(beginLevel);
         carSpeed = maxSpeed;
         originalSpeed = 10;
+        car.transform.position = (shift[keyPressed].transform.position);
     }
     // Update is called once per frame
     void Update()
@@ -215,39 +226,7 @@ public class Trial3 : MonoBehaviour
                         }
 
                     }
-                    if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")) || ((answer == g) && Input.GetKeyDown("g")) || ((answer == h) && Input.GetKeyDown("h")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")))
-                    {
-                        timer.Stop();
-                        keyPressed = answer;
-                        correctAnswer();
-                    }
 
-                    else if (Input.GetKeyDown("d"))
-                    {
-                        keyPressed = d;
-                        wrongAnswer();
-                    }
-                    else if (Input.GetKeyDown("f"))
-                    {
-                        keyPressed = f;
-                        wrongAnswer();
-                    }
-                    else if (Input.GetKeyDown("j"))
-                    {
-                        keyPressed = j;
-                        wrongAnswer();
-                    }
-                    else if (Input.GetKeyDown("k"))
-                    {
-                        keyPressed = k;
-                        wrongAnswer();
-                    }
-                    else if (obstacles.transform.position.y <= midPoint.position.y)
-                    {
-                        wrongAnswer();
-                        brake.Play();
-                        restarting = true;
-                    }
                 }
 
             }
@@ -320,7 +299,7 @@ public class Trial3 : MonoBehaviour
                 }
                 if (obstacles.transform.position.y <= appearance)
                 {
-                    if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")))
+                    if (((answer == 0) && Input.GetKeyDown("d")) || ((answer == 1) && Input.GetKeyDown("f")) || ((answer == 2) && Input.GetKeyDown("j")) || ((answer == 3) && Input.GetKeyDown("k")))
                     {
                         timer.Stop();
                         keyPressed = answer;
@@ -329,22 +308,22 @@ public class Trial3 : MonoBehaviour
 
                     else if (Input.GetKeyDown("d"))
                     {
-                        keyPressed = d;
+                        keyPressed = 0;
                         wrongAnswer();
                     }
                     else if (Input.GetKeyDown("f"))
                     {
-                        keyPressed = f;
+                        keyPressed = 1;
                         wrongAnswer();
                     }
                     else if (Input.GetKeyDown("j"))
                     {
-                        keyPressed = j;
+                        keyPressed = 2;
                         wrongAnswer();
                     }
                     else if (Input.GetKeyDown("k"))
                     {
-                        keyPressed =  k;
+                        keyPressed =  3;
                         wrongAnswer();
                     }
                     else if (obstacles.transform.position.y <= midPoint.position.y)
