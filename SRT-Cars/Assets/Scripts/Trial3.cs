@@ -9,10 +9,14 @@ public class Trial3 : MonoBehaviour
     public bool waiting = false;
     public bool loading = false;
     public bool running = false;
-    private int d = 1;
+    private int g = 0;
+    private int h = 1;
     private int f = 2;
     private int j = 3;
-    private int k = 4;
+    private int d = 4;
+    private int k = 5;
+    private int s = 6;
+    private int l = 7;
     public float appearance;
     public GameObject obstacles;
     public GameObject lines;
@@ -23,13 +27,13 @@ public class Trial3 : MonoBehaviour
     public Transform lineStart;
     public Transform lineEnd;
     public Transform slowPoint;
-    public float speed;
+    public float shiftSpeed;
     public Button startButton;
     public Text responseTime;
     public Text percentCorrect;
     public GameObject endPanel;
-    public Animator car;
-    public Animator anim;
+    public GameObject car;
+    public int keyPressed;
     public Animator startingAnimation;
     public static Stack<int> Pattern = new Stack<int>();
     public float trials;
@@ -44,21 +48,45 @@ public class Trial3 : MonoBehaviour
     public int midSpeed;
     public int minSpeed;
     public float speedChange;
-    public int brakeSpeed;
     public bool restarting = false;
-    public float carSpeed;
-    public float obstacleSpeed;
-    public float originalSpeed;
+    private float carSpeed;
+    private float obstacleSpeed;
+    private float originalSpeed;
     public AudioSource brake;
+    private int lanes;
+    public Camera cam;
+    public GameObject yellowLines;
+    public GameObject seperators;
+    public GameObject whiteLine;
+    public GameObject obstacle1;
+    public GameObject[] carz;
+    public GameObject[] shift;
+    public Transform pos;
+    public Transform obs;
+    public Transform shifts;
+    public Sprite[] sprites = new Sprite[2];
+    public GameObject Locations;
+    private SpriteRenderer sRender;
+    public string[] keys;
+    public string[] posKeys;
 
     private void Awake()
     {
+        keys = new string[] { "g", "h", "f", "j", "d", "k", "s", "l" };
+        lanes = 6;
+        posKeys = new string[lanes];
+        float camHeight = cam.orthographicSize * 1.9f;
+        float camWidth = camHeight * cam.aspect;
+        float x1 = camWidth/(lanes);
         appearance = 3.8f;
         maxSpeed = 16;
-        midSpeed = 10;
-        minSpeed = 6;
-        speedChange = .25f;
+        midSpeed = 11;
+        minSpeed = 2;
+        speedChange = .5f;
+        shiftSpeed = 12;
         obstacles.transform.position = startPoint.position;
+        carz = new GameObject[lanes];
+        shift = new GameObject[lanes];
         for (int i = 0; i < 5; i++)
         {
             Pattern.Push(d);
@@ -66,20 +94,51 @@ public class Trial3 : MonoBehaviour
             Pattern.Push(k);
             Pattern.Push(f);
         }
+        for(int i = 0; i<lanes; i++)
+        {
+            posKeys[i] = keys[i];
+        }
+            for (float i = 0 - ((lanes) / 2f); i <= ((lanes) / 2f); i++)
+            {
+                if (i == (0 - (lanes) / 2f))
+                {
+                    Sprite.Instantiate(yellowLines, pos).transform.position = new Vector3(x1 * i, 0, 0);
+                }
+                else if (i == ((lanes) / 2f))
+                {
+                    Sprite.Instantiate(whiteLine, pos).transform.position = new Vector3(x1 * i, 0, 0);
+                }
+                else
+                {
+                    Sprite.Instantiate(seperators, pos).transform.position = new Vector3(x1 * i, 0, 0);
+                }
+            }
+            for(int i = 0; i< lanes; i++)
+        {
+            carz[i] = Sprite.Instantiate(obstacle1,obs) as GameObject;
+            carz[i].transform.position = new Vector3(obs.position.x + (x1*i)+(x1/1.5f), obs.position.y, -10);
+            carz[i].transform.localScale = new Vector3(20/lanes,20/lanes,1);
+            shift[i] = Sprite.Instantiate(Locations,shifts) as GameObject;
+            shift[i].transform.position = new Vector3(shifts.position.x + +(x1 * i) + (x1 / 1.5f), -3,-10);
+
+
+        }
         trials = Pattern.Count;
         totalTrials = Pattern.Count;
         answer = Pattern.Pop();
         timer = new Stopwatch();
-        anim.SetInteger("Key", answer);
+        sRender = carz[answer].GetComponent<SpriteRenderer>();
+        sRender.sprite = sprites[0];
         startButton.onClick.AddListener(beginLevel);
         carSpeed = maxSpeed;
-        originalSpeed = maxSpeed-minSpeed -2;
+        originalSpeed = 10;
     }
     // Update is called once per frame
     void Update()
     {
         obstacleSpeed = carSpeed - originalSpeed;
-        float step = obstacleSpeed * 2 * Time.deltaTime;
+        float shifting = shiftSpeed * Time.deltaTime;
+        float step = obstacleSpeed * Time.deltaTime;
         float lineStep = carSpeed * Time.deltaTime;
 
         lines.transform.position = Vector2.MoveTowards(lines.transform.position, lineEnd.position, lineStep);
@@ -87,23 +146,25 @@ public class Trial3 : MonoBehaviour
         {
             lines.transform.position = lineStart.position;
         }
-        
+
         if (Pattern.Count != 0)
         {
             if ((waiting) && (!loading) && running)
             {
-                //road.SetBool("Speeding", true);
+                car.transform.position = Vector3.MoveTowards(car.transform.position, shift[answer].transform.position, shifting);
+                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step*1.5f);
                 if (carSpeed < maxSpeed)
                 {
                     carSpeed += speedChange;
                 }
-                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
                 if (obstacles.transform.position.y == endPoint.position.y)
                 {
                     waiting = false;
                     loading = true;
+                    sRender.sprite = sprites[1];
                     answer = Pattern.Pop();
-                    anim.SetInteger("Key", answer);
+                    sRender = carz[answer].GetComponent<SpriteRenderer>();
+                    sRender.sprite = sprites[0];
                     obstacles.transform.position = startPoint.position;
                 }
             }
@@ -111,12 +172,12 @@ public class Trial3 : MonoBehaviour
             {
                 if (obstacles.transform.position.y >= slowPoint.position.y)
                 {
-                    if(carSpeed < maxSpeed)
+                    if (carSpeed < maxSpeed)
                     {
                         carSpeed += speedChange;
                     }
                 }
-                    if (obstacles.transform.position.y <= slowPoint.position.y)
+                else if (obstacles.transform.position.y <= slowPoint.position.y)
                 {
                     if (carSpeed > midSpeed)
                     {
@@ -133,31 +194,52 @@ public class Trial3 : MonoBehaviour
                 }
                 else if (obstacles.transform.position.y <= appearance)
                 {
-                    if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")))
+                    for (int i = 0; i<lanes; i++)
+                    {
+                        if((answer==i) && (Input.GetKeyDown(posKeys[i])))
+                        {
+                            timer.Stop();
+                            keyPressed = answer;
+                            correctAnswer();
+                        }
+                        else if (Input.GetKeyDown(posKeys[i]))
+                        {
+                            keyPressed = i;
+                            wrongAnswer();
+                        }
+                        else if (obstacles.transform.position.y <= midPoint.position.y)
+                        {
+                            wrongAnswer();
+                            brake.Play();
+                            restarting = true;
+                        }
+
+                    }
+                    if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")) || ((answer == g) && Input.GetKeyDown("g")) || ((answer == h) && Input.GetKeyDown("h")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")))
                     {
                         timer.Stop();
-                        car.SetInteger("Key", answer);
+                        keyPressed = answer;
                         correctAnswer();
                     }
 
                     else if (Input.GetKeyDown("d"))
                     {
-                        car.SetInteger("Key", d);
+                        keyPressed = d;
                         wrongAnswer();
                     }
                     else if (Input.GetKeyDown("f"))
                     {
-                        car.SetInteger("Key", f);
+                        keyPressed = f;
                         wrongAnswer();
                     }
                     else if (Input.GetKeyDown("j"))
                     {
-                        car.SetInteger("Key", j);
+                        keyPressed = j;
                         wrongAnswer();
                     }
                     else if (Input.GetKeyDown("k"))
                     {
-                        car.SetInteger("Key", k);
+                        keyPressed = k;
                         wrongAnswer();
                     }
                     else if (obstacles.transform.position.y <= midPoint.position.y)
@@ -171,14 +253,14 @@ public class Trial3 : MonoBehaviour
             }
             else if ((!waiting) && (!loading) && running)
             {
-                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
+                car.transform.position = Vector3.MoveTowards(car.transform.position, shift[keyPressed].transform.position, shifting);
+                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step*1.5f);
                 if (!restarting)
                 {
                     if (carSpeed < maxSpeed)
                     {
                         carSpeed += speedChange;
                     }
-                    obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
                     if (obstacles.transform.position.y <= midPoint.position.y)
                     {
                         brake.Play();
@@ -201,19 +283,12 @@ public class Trial3 : MonoBehaviour
         }
         else
         {
-            if (road < maxSpeed)
-            {
-                road += speedChange;
-                speed += speedChange;
-            }
             if ((waiting) && (!loading) && running)
             {
-
-                //road.SetBool("Speeding", true);
                 if (road < maxSpeed)
                 {
                     road += speedChange;
-                    speed += speedChange;
+                    shiftSpeed += speedChange;
                 }
                 obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
                 if (obstacles.transform.position.y == endPoint.position.y)
@@ -223,25 +298,22 @@ public class Trial3 : MonoBehaviour
             }
             else if ((!waiting) && (loading) && running)
             {
-                if (!restarting)
+                //road.SetBool("Speeding", true);
+                if (obstacles.transform.position.y > slowPoint.position.y)
                 {
-                    obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, midPoint.position, step);
-                }
-                if (restarting)
-                {
-                    obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, restartPoint.position, step);
-                    if (obstacles.transform.position.y == restartPoint.position.y)
+                    if (carSpeed < maxSpeed)
                     {
-                        road = minSpeed;
-                        restarting = false;
+                        carSpeed += speedChange;
                     }
                 }
-                //road.SetBool("Speeding", true);
-                if (road > minSpeed)
+                else if (obstacles.transform.position.y <= slowPoint.position.y)
                 {
-                    road -= speedChange;
-                    speed -= speedChange;
+                    if (carSpeed > midSpeed)
+                    {
+                        carSpeed -= speedChange;
+                    }
                 }
+                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
                 if ((obstacles.transform.position.y <= appearance) && timer.ElapsedMilliseconds == 0)
                 {
                     timer.Start();
@@ -251,47 +323,88 @@ public class Trial3 : MonoBehaviour
                     if (((answer == d) && Input.GetKeyDown("d")) || ((answer == f) && Input.GetKeyDown("f")) || ((answer == j) && Input.GetKeyDown("j")) || ((answer == k) && Input.GetKeyDown("k")))
                     {
                         timer.Stop();
-                        car.SetInteger("Key", answer);
+                        keyPressed = answer;
                         endCorrectAnswer();
                     }
 
                     else if (Input.GetKeyDown("d"))
                     {
-                        car.SetInteger("Key", d);
-                        endWrongAnswer();
+                        keyPressed = d;
+                        wrongAnswer();
                     }
                     else if (Input.GetKeyDown("f"))
                     {
-                        car.SetInteger("Key", f);
-                        endWrongAnswer();
+                        keyPressed = f;
+                        wrongAnswer();
                     }
                     else if (Input.GetKeyDown("j"))
                     {
-                        car.SetInteger("Key", j);
-                        endWrongAnswer();
+                        keyPressed = j;
+                        wrongAnswer();
                     }
                     else if (Input.GetKeyDown("k"))
                     {
-                        car.SetInteger("Key", k);
-                        endWrongAnswer();
+                        keyPressed =  k;
+                        wrongAnswer();
+                    }
+                    else if (obstacles.transform.position.y <= midPoint.position.y)
+                    {
+                        wrongAnswer();
+                        brake.Play();
+                        restarting = true;
+                    }
+                }
+
+            }
+            else if ((!waiting) && (!loading) && running)
+            {
+                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step * 1.5f);
+                if (!restarting)
+                {
+                    car.transform.position = Vector3.MoveTowards(car.transform.position, shift[keyPressed].transform.position, shifting);
+                    if (carSpeed < maxSpeed)
+                    {
+                        carSpeed += speedChange;
+                    }
+                    if (obstacles.transform.position.y <= midPoint.position.y)
+                    {
+                        brake.Play();
+                        restarting = true;
+                    }
+                }
+                else
+                {
+                    if (carSpeed > minSpeed)
+                    {
+                        carSpeed -= speedChange;
+                    }
+                    else if (obstacles.transform.position.y >= restartPoint.position.y)
+                    {
+                        loading = true;
+                        restarting = false;
                     }
                 }
             }
+        
             else if (!running)
             {
                 //road.SetBool("Speeding", true);
                 if (road < maxSpeed)
                 {
                     road += speedChange;
-                    speed += speedChange;
+                    shiftSpeed += speedChange;
                 }
-                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
+                car.transform.position = Vector3.MoveTowards(car.transform.position, shift[answer].transform.position, shifting);
+                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step*1.5f);
+                if(obstacles.transform.position.y == endPoint.position.y)
+                {
+                    endPanel.SetActive(true);
+                }
 
             }
         }
-
     }
-
+    
     void correctAnswer()
     {
         totalTime = totalTime + timer.ElapsedMilliseconds;
@@ -305,8 +418,6 @@ public class Trial3 : MonoBehaviour
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
         trials += 1;
         loading = false;
-
-
     }
 
     void endCorrectAnswer()
@@ -316,19 +427,10 @@ public class Trial3 : MonoBehaviour
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
         responseTime.text = ((totalTrials / trials) * 100 + "% correct");
         percentCorrect.text = ((totalTime / totalTrials) + " = Average response time");
-        StartCoroutine(ending());
+        UnityEngine.Debug.Log(responseTime.text);
+        UnityEngine.Debug.Log(percentCorrect.text);
     }
-    void endWrongAnswer()
-    {
-        running = false;
-        trials += 1;
-        totalTime = totalTime + timer.ElapsedMilliseconds;
-        UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        responseTime.text = (((totalTrials) / trials) * 100 + "% correct");
-        percentCorrect.text = ((totalTime / totalTrials) + " = Average response time");
-        StartCoroutine(ending());
 
-    }
     void beginLevel()
     {
         StartCoroutine(begining());
@@ -344,13 +446,6 @@ public class Trial3 : MonoBehaviour
         startingAnimation.SetInteger("seconds", 0);
         running = true;
         loading = true;
-    }
-    IEnumerator ending()
-    {
-        yield return new WaitForSecondsRealtime(1);
-        endPanel.SetActive(true);
-        UnityEngine.Debug.Log(responseTime.text);
-        UnityEngine.Debug.Log(percentCorrect.text);
     }
 }
 
