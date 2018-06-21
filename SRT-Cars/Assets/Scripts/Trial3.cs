@@ -45,6 +45,7 @@ public class Trial3 : MonoBehaviour
     private float obstacleSpeed;
     private float originalSpeed;
     public AudioSource brake;
+    public AudioSource SpeedUp;
     private int lanes;
     public Camera cam;
     public GameObject yellowLines;
@@ -222,6 +223,7 @@ public class Trial3 : MonoBehaviour
                         else if (obstacles.transform.position.y <= midPoint.position.y)
                         {
                             wrongAnswer();
+                            SpeedUp.Stop();
                             brake.Play();
                             restarting = true;
                         }
@@ -243,6 +245,7 @@ public class Trial3 : MonoBehaviour
                     }
                     if (obstacles.transform.position.y <= midPoint.position.y)
                     {
+                        SpeedUp.Stop();
                         brake.Play();
                         restarting = true;
                     }
@@ -315,6 +318,7 @@ public class Trial3 : MonoBehaviour
                         else if (obstacles.transform.position.y <= midPoint.position.y)
                         {
                             wrongAnswer();
+                            SpeedUp.Stop();
                             brake.Play();
                             restarting = true;
                         }
@@ -336,6 +340,7 @@ public class Trial3 : MonoBehaviour
                     }
                     if (obstacles.transform.position.y <= midPoint.position.y)
                     {
+                        SpeedUp.Stop();
                         brake.Play();
                         restarting = true;
                     }
@@ -375,6 +380,7 @@ public class Trial3 : MonoBehaviour
     
     void correctAnswer()
     {
+        SpeedUp.Play();
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
         waiting = true;
@@ -383,6 +389,7 @@ public class Trial3 : MonoBehaviour
     }
     void wrongAnswer()
     {
+        SpeedUp.Play();
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
         trials += 1;
         loading = false;
@@ -391,6 +398,7 @@ public class Trial3 : MonoBehaviour
     void endCorrectAnswer()
     {
         running = false;
+        SpeedUp.Play();
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
         responseTime.text = ((totalTrials / trials) * 100 + "% correct");
