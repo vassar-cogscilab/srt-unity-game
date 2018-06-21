@@ -75,16 +75,16 @@ public class Trial3 : MonoBehaviour
         maxSpeed = 16;
         midSpeed = 11;
         minSpeed = 2;
-        speedChange = .5f;
+        speedChange = 1f;
         shiftSpeed = 40;
         obstacles.transform.position = startPoint.position;
         carz = new GameObject[lanes];
         shift = new GameObject[lanes];
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 5; i++)
         {
-            Pattern.Push(0);
-            Pattern.Push(0);
-            Pattern.Push(0);
+            Pattern.Push(1);
+            Pattern.Push(3);
+            Pattern.Push(2);
             Pattern.Push(0);
         }
         if (lanes <= 2)
@@ -127,7 +127,7 @@ public class Trial3 : MonoBehaviour
         {
             carz[i] = Sprite.Instantiate(obstacle1,obs) as GameObject;
             carz[i].transform.position = new Vector3(obs.position.x + (x1*i)+(x1/1.5f), obs.position.y, -10);
-            carz[i].transform.localScale = new Vector3(20/lanes,20/lanes,1);
+            carz[i].transform.localScale = new Vector3(5f/lanes,5f/lanes,1);
             shift[i] = Sprite.Instantiate(Locations,shifts) as GameObject;
             shift[i].transform.position = new Vector3(shifts.position.x + +(x1 * i) + (x1 / 1.5f), -3,-10);
 
