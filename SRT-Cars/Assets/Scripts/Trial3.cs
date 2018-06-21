@@ -66,7 +66,7 @@ public class Trial3 : MonoBehaviour
     private void Awake()
     {
         keys = new string[] { "s", "d", "f", "g", "h", "j", "k", "l" };
-        lanes = 6;
+        lanes = 4;
         posKeys = new string[lanes];
         float camHeight = cam.orthographicSize * 1.9f;
         float camWidth = camHeight * cam.aspect;
@@ -76,16 +76,16 @@ public class Trial3 : MonoBehaviour
         midSpeed = 11;
         minSpeed = 2;
         speedChange = .5f;
-        shiftSpeed = 20;
+        shiftSpeed = 40;
         obstacles.transform.position = startPoint.position;
         carz = new GameObject[lanes];
         shift = new GameObject[lanes];
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 1; i++)
         {
-            Pattern.Push(1);
             Pattern.Push(0);
-            Pattern.Push(4);
-            Pattern.Push(5);
+            Pattern.Push(0);
+            Pattern.Push(0);
+            Pattern.Push(0);
         }
         if (lanes <= 2)
         {
@@ -143,6 +143,7 @@ public class Trial3 : MonoBehaviour
         carSpeed = maxSpeed;
         originalSpeed = 10;
         car.transform.position = (shift[keyPressed].transform.position);
+        car.transform.localScale = new Vector3(5f/ lanes, 5f / lanes, 1);
     }
     // Update is called once per frame
     void Update()
@@ -158,7 +159,7 @@ public class Trial3 : MonoBehaviour
             lines.transform.position = lineStart.position;
         }
 
-        if (Pattern.Count != 0)
+        if (Pattern.Count > 0)
         {
             if ((waiting) && (!loading) && running)
             {
@@ -277,7 +278,6 @@ public class Trial3 : MonoBehaviour
             }
             else if ((!waiting) && (loading) && running)
             {
-                //road.SetBool("Speeding", true);
                 if (obstacles.transform.position.y > slowPoint.position.y)
                 {
                     if (carSpeed < maxSpeed)
@@ -297,43 +297,32 @@ public class Trial3 : MonoBehaviour
                 {
                     timer.Start();
                 }
-                if (obstacles.transform.position.y <= appearance)
+                else if (obstacles.transform.position.y <= appearance)
                 {
-                    if (((answer == 0) && Input.GetKeyDown("d")) || ((answer == 1) && Input.GetKeyDown("f")) || ((answer == 2) && Input.GetKeyDown("j")) || ((answer == 3) && Input.GetKeyDown("k")))
+                    for (int i = 0; i < lanes; i++)
                     {
-                        timer.Stop();
-                        keyPressed = answer;
-                        endCorrectAnswer();
+                        if ((answer == i) && (Input.GetKeyDown(posKeys[i])))
+                        {
+                            timer.Stop();
+                            keyPressed = answer;
+                            endCorrectAnswer();
+                        }
+                        else if (Input.GetKeyDown(posKeys[i]))
+                        {
+                            keyPressed = i;
+                            wrongAnswer();
+                        }
+                        else if (obstacles.transform.position.y <= midPoint.position.y)
+                        {
+                            wrongAnswer();
+                            brake.Play();
+                            restarting = true;
+                        }
+
                     }
 
-                    else if (Input.GetKeyDown("d"))
-                    {
-                        keyPressed = 0;
-                        wrongAnswer();
-                    }
-                    else if (Input.GetKeyDown("f"))
-                    {
-                        keyPressed = 1;
-                        wrongAnswer();
-                    }
-                    else if (Input.GetKeyDown("j"))
-                    {
-                        keyPressed = 2;
-                        wrongAnswer();
-                    }
-                    else if (Input.GetKeyDown("k"))
-                    {
-                        keyPressed =  3;
-                        wrongAnswer();
-                    }
-                    else if (obstacles.transform.position.y <= midPoint.position.y)
-                    {
-                        wrongAnswer();
-                        brake.Play();
-                        restarting = true;
-                    }
+
                 }
-
             }
             else if ((!waiting) && (!loading) && running)
             {
@@ -364,23 +353,23 @@ public class Trial3 : MonoBehaviour
                     }
                 }
             }
-        
+
             else if (!running)
             {
                 //road.SetBool("Speeding", true);
-                if (road < maxSpeed)
+                if (carSpeed < maxSpeed)
                 {
-                    road += speedChange;
-                    shiftSpeed += speedChange;
+                    carSpeed += speedChange;
                 }
                 car.transform.position = Vector3.MoveTowards(car.transform.position, shift[answer].transform.position, shifting);
-                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step*1.5f);
-                if(obstacles.transform.position.y == endPoint.position.y)
+                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step * 1.5f);
+                if (obstacles.transform.position.y == endPoint.position.y)
                 {
                     endPanel.SetActive(true);
                 }
-
             }
+
+            
         }
     }
     
