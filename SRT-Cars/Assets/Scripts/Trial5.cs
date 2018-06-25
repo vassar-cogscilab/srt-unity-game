@@ -176,14 +176,15 @@ public class Trial5 : MonoBehaviour
         k = j;
             for(int i = 0; i< lanes; i++)
         {
-            carz[i] = Sprite.Instantiate(obstacle1,obs) as GameObject;
-            carz[i].transform.position = new Vector3(obs.position.x + (x1*i)+(x1/1.5f), obs.position.y, -11);
-            carz[i].transform.localScale = new Vector3(5f/lanes,5f/lanes,1);
-            shift[i] = Sprite.Instantiate(Locations,shifts) as GameObject;
-            shift[i].transform.position = new Vector3(shifts.position.x + +(x1 * i) + (x1 / 1.5f), -3,-10);
-            sRender = shift[i].GetComponent<SpriteRenderer>();
-            sRender.sprite = keySprites[k];
-            k++;
+                carz[i] = Sprite.Instantiate(obstacle1, obs) as GameObject;
+                carz[i].transform.position = new Vector3((x1 * i)-(camWidth/2.5f), obs.position.y, -11);
+                carz[i].transform.localScale = new Vector3(5f / lanes, 5f / lanes, 1);
+                shift[i] = Sprite.Instantiate(Locations, shifts) as GameObject;
+                shift[i].transform.position = new Vector3((x1 * i)-(camWidth/2.5f), -3, -10);
+                sRender = shift[i].GetComponent<SpriteRenderer>();
+                sRender.sprite = keySprites[k];
+                k++;
+
 
 
         }
