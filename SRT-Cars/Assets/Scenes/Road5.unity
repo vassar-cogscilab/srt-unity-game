@@ -660,8 +660,8 @@ MonoBehaviour:
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 1
-    m_VerticalOverflow: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Main Menu
 --- !u!222 &228185333
@@ -709,9 +709,8 @@ GameObject:
   - component: {fileID: 395553103}
   - component: {fileID: 395553102}
   - component: {fileID: 395553101}
-  - component: {fileID: 395553100}
   m_Layer: 5
-  m_Name: Try again
+  m_Name: Next Level
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -736,17 +735,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &395553100
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 395553098}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92ed5f61e4abe5a4ba8fb5d68986edd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &395553101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -786,13 +774,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 395553100}
-        m_MethodName: LoadByIndex
-        m_Mode: 3
+      - m_Target: {fileID: 2131875277}
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
+          m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -1149,7 +1137,7 @@ GameObject:
   - component: {fileID: 689351782}
   - component: {fileID: 689351781}
   m_Layer: 5
-  m_Name: Try Again
+  m_Name: nextLevelText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1202,10 +1190,10 @@ MonoBehaviour:
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 1
-    m_VerticalOverflow: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Try Again
+  m_Text: Next Level
 --- !u!222 &689351782
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1556,6 +1544,64 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 822285237}
+--- !u!1 &950516732
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 950516735}
+  - component: {fileID: 950516734}
+  - component: {fileID: 950516733}
+  m_Layer: 0
+  m_Name: Progress
+  m_TagString: progress
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &950516733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 950516732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11be5fe308454294fa48dd4a189094bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  level1: 1
+  level2: 0
+  level3: 0
+  level4: 0
+  level5: 0
+  level6: 0
+--- !u!114 &950516734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 950516732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b24f558769fa22468ad820bdfee6db6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &950516735
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 950516732}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 501.43134, y: 385.4685, z: 3.875}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &962785395
 GameObject:
   m_ObjectHideFlags: 0
@@ -1709,6 +1755,7 @@ GameObject:
   m_Component:
   - component: {fileID: 994323747}
   - component: {fileID: 994323746}
+  - component: {fileID: 994323748}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -1739,6 +1786,7 @@ MonoBehaviour:
   - {fileID: 21300010, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
   - {fileID: 21300012, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
   - {fileID: 21300014, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
+  cfig: {fileID: 994323748}
 --- !u!4 &994323747
 Transform:
   m_ObjectHideFlags: 0
@@ -1752,6 +1800,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &994323748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 994323745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80cf97396716ad14abb480aeb417d1b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Lanes: 4
+  Pattern: 00000000010000000200000003000000010000000200000000000000020000000100000003000000
+  Repetitions: 2
+  Random: 0
+  RandomRep: 0
 --- !u!1 &1099355052
 GameObject:
   m_ObjectHideFlags: 0
@@ -2361,7 +2425,7 @@ GameObject:
   - component: {fileID: 1668814968}
   - component: {fileID: 1668814967}
   m_Layer: 5
-  m_Name: Text
+  m_Name: levelnumber
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2417,7 +2481,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: End Of Level
+  m_Text: level
 --- !u!222 &1668814968
 CanvasRenderer:
   m_ObjectHideFlags: 0
