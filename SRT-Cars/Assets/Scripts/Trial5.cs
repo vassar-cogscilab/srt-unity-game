@@ -56,20 +56,23 @@ public class Trial5 : MonoBehaviour
     private GameObject obstacle1;
     private GameObject[] carz;
     private GameObject[] shift;
+    private GameObject[] laneButtons;
     private Transform pos;
     private Transform obs;
     private Transform shifts;
+    private Transform ButtonStorage;
     public Sprite[] sprites = new Sprite[2];
     public Sprite[] keySprites = new Sprite[8];
     private GameObject Locations;
+    private GameObject laneButton;
     private SpriteRenderer sRender;
     private string[] keys;
     private string[] posKeys;
     private int j;
     private Text scoreBox;
-    private Text Multiplier;
+    //private Text Multiplier;
     private int score;
-    private int Streak;
+   // private int Streak;
     private int scoreMultiplier;
     private int points;
     private Stack<int> inputPressed;
@@ -90,11 +93,16 @@ public class Trial5 : MonoBehaviour
     private int level;
     private Text levelText;
     private string json;
+    private Stopwatch time;
+    private Text bestScoreText;
+    private long bestScore;
+
 
 
 
     private void Awake()
     {
+        bestScore = 0;
         inputPressed = new Stack<int>();
         correctInput = new Stack<int>();
         wasInputCorrect = new Stack<bool>();
@@ -122,8 +130,9 @@ public class Trial5 : MonoBehaviour
         startButton = GameObject.Find("startButton").GetComponent<Button>();
         nextLevel = GameObject.Find("Next Level").GetComponent<Button>();
         responseTime = GameObject.Find("Response Time").GetComponent<Text>();
-        percentCorrect = GameObject.Find("Percent Correct").GetComponent<Text>();
+        //percentCorrect = GameObject.Find("Percent Correct").GetComponent<Text>();
         levelText = GameObject.Find("levelnumber").GetComponent<Text>();
+        bestScoreText = GameObject.Find("Best Score").GetComponent<Text>();
         endPanel = GameObject.Find("EndScreen");
         endPanel.SetActive(false);
         car = GameObject.Find("Car");
@@ -138,14 +147,15 @@ public class Trial5 : MonoBehaviour
         pos = GameObject.Find("Road Lines").transform;
         obs = GameObject.Find("Obstacles").transform;
         shifts = GameObject.Find("Locations").transform;
+        ButtonStorage = GameObject.Find("LaneButtonStorage").transform;
         Locations = GameObject.Find("LocationsChild");
+        laneButton = GameObject.Find("Lane Button");
         scoreBox = GameObject.Find("Score").GetComponent<Text>();
-        Multiplier = GameObject.Find("Multiplier").GetComponent<Text>();
+        //Multiplier = GameObject.Find("Multiplier").GetComponent<Text>();
         points = 10;
         score = 0;
-        Streak = 0;
         scoreMultiplier = 1;
-        scoreBox.text = ("Score: " + score);
+        scoreBox.text = ("Time: " + score);
         keys = new string[] { "s", "d", "f", "g", "h", "j", "k", "l" };
         posKeys = new string[lanes];
         float camHeight = cam.orthographicSize * 1.9f;
@@ -160,6 +170,7 @@ public class Trial5 : MonoBehaviour
         obstacles.transform.position = startPoint.position;
         carz = new GameObject[lanes];
         shift = new GameObject[lanes];
+        laneButtons = new GameObject[lanes];
         currentSequence = 1;
 
         sequenceLength = 10;
@@ -217,14 +228,18 @@ public class Trial5 : MonoBehaviour
         k = j;
             for(int i = 0; i< lanes; i++)
         {
-                carz[i] = Sprite.Instantiate(obstacle1, obs) as GameObject;
-                carz[i].transform.position = new Vector3((x1 * i)-(camWidth/2.5f), obs.position.y, -11);
-                carz[i].transform.localScale = new Vector3(5f / lanes, 5f / lanes, 1);
-                shift[i] = Sprite.Instantiate(Locations, shifts) as GameObject;
-                shift[i].transform.position = new Vector3((x1 * i)-(camWidth/2.5f), -3, -10);
-                sRender = shift[i].GetComponent<SpriteRenderer>();
-                sRender.sprite = keySprites[k];
-                k++;
+            carz[i] = Sprite.Instantiate(obstacle1, obs) as GameObject;
+            carz[i].transform.position = new Vector3((x1 * i) - (camWidth / 2.5f), obs.position.y, -11);
+            carz[i].transform.localScale = new Vector3(5f / lanes, 5f / lanes, 1);
+            shift[i] = Sprite.Instantiate(Locations, shifts) as GameObject;
+            shift[i].transform.position = new Vector3((x1 * i) - (camWidth / 2.5f), -3, -10);
+            sRender = shift[i].GetComponent<SpriteRenderer>();
+            sRender.sprite = keySprites[k];
+            laneButton.GetComponent<LaneButton>().laneNumber = i;
+            laneButtons[i] = Sprite.Instantiate(laneButton, ButtonStorage) as GameObject;
+            laneButtons[i].transform.position = new Vector3((x1 * i) - (camWidth / 2.5f), -3, -10);
+            laneButtons[i].transform.localScale = new Vector3(10f / lanes, 10f / lanes, 1);
+            k++;
 
 
 
@@ -241,13 +256,16 @@ public class Trial5 : MonoBehaviour
         originalSpeed = 10;
         car.transform.position = (shift[keyPressed].transform.position);
         car.transform.localScale = new Vector3(5f/ lanes, 5f / lanes, 1);
+        time = new Stopwatch();
     }
 
     // Update is called once per frame
     void Update()
     {
-        scoreBox.text = ("Score: " + score);
-        Multiplier.text = "X" + scoreMultiplier;
+        if (time.ElapsedMilliseconds > 0)
+        {
+            scoreBox.text = ("Time: " + (time.ElapsedMilliseconds / 1000f));
+        }
         obstacleSpeed = carSpeed - originalSpeed;
         float shifting = shiftSpeed * Time.deltaTime;
         float step = obstacleSpeed * Time.deltaTime;
@@ -308,15 +326,15 @@ public class Trial5 : MonoBehaviour
                 }
                 else if (obstacles.transform.position.y <= appearance)
                 {
-                    for (int i = 0; i<lanes; i++)
+                    for (int i = 0; i < lanes; i++)
                     {
-                        if((answer==i) && (Input.GetKeyDown(posKeys[i])))
+                        if (((answer == i) && (Input.GetKeyDown(posKeys[i]))) || (answer == i) && cfig.lanePressed[i])
                         {
                             timer.Stop();
                             keyPressed = answer;
                             correctAnswer();
                         }
-                        else if (Input.GetKeyDown(posKeys[i]))
+                        else if (Input.GetKeyDown(posKeys[i]) || cfig.lanePressed[i])
                         {
                             keyPressed = i;
                             wrongAnswer();
@@ -408,13 +426,13 @@ public class Trial5 : MonoBehaviour
                 {
                     for (int i = 0; i < lanes; i++)
                     {
-                        if ((answer == i) && (Input.GetKeyDown(posKeys[i])))
+                        if (((answer == i) && (Input.GetKeyDown(posKeys[i]))) || (answer == i) && cfig.lanePressed[i])
                         {
                             timer.Stop();
                             keyPressed = answer;
                             endCorrectAnswer();
                         }
-                        else if (Input.GetKeyDown(posKeys[i]))
+                        else if (Input.GetKeyDown(posKeys[i]) || cfig.lanePressed[i])
                         {
                             keyPressed = i;
                             wrongAnswer();
@@ -489,24 +507,6 @@ public class Trial5 : MonoBehaviour
     
     void correctAnswer()
     {
-        if (Streak < 5)
-        {
-            scoreMultiplier = 1;
-        }
-        else if (Streak < 10)
-        {
-            scoreMultiplier = 2;
-        }
-        else if (Streak < 15)
-        {
-            scoreMultiplier = 3;
-        }
-        else
-        {
-            scoreMultiplier = 4;
-        }
-        score = score + (points * scoreMultiplier);
-        Streak ++;
         SpeedUp.Play();
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
@@ -537,24 +537,27 @@ public class Trial5 : MonoBehaviour
         responseTimes.Push(timer.ElapsedMilliseconds);
         sequenceInput.Push(currentSequence);
         loading = false;
-        scoreMultiplier = 1;
-        Streak = 0;
     }
 
     void endCorrectAnswer()
     {
+        time.Stop();
         levelText.text = "Level " + level + " Complete!";
         block.Push(level);
         level++;
         running = false;
-        score = score + (points * scoreMultiplier);
         SpeedUp.Play();
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        percentCorrect.text = ((totalTrials / trials) * 100 + "% correct");
-        responseTime.text = ((totalTime / totalTrials) + " = Average response time");
+        //percentCorrect.text = ((totalTrials / trials) * 100 + "% correct");
+        responseTime.text = "You completed the level in " + time.ElapsedMilliseconds / 1000f + " seconds" ;
+        if ((time.ElapsedMilliseconds < bestScore) || (bestScore == 0))
+        {
+            bestScore = time.ElapsedMilliseconds;
+            bestScoreText.text = "Best Score: " + bestScore / 1000f;
+        }
         UnityEngine.Debug.Log(responseTime.text);
-        UnityEngine.Debug.Log(percentCorrect.text);
+        //UnityEngine.Debug.Log(percentCorrect.text);
         inputPressed.Push(keyPressed);
         correctInput.Push(keyPressed);
         wasInputCorrect.Push(true);
@@ -603,11 +606,13 @@ public class Trial5 : MonoBehaviour
         startingAnimation.SetInteger("seconds", 0);
         running = true;
         loading = true;
+        time.Start();
     }
     
     IEnumerator startNextLevel()
     {
-
+        time = new Stopwatch();
+        scoreBox.text = ("Time: " + 0);
         endPanel.SetActive(false);
         if (cfig.Random == true)
         {
@@ -642,6 +647,7 @@ public class Trial5 : MonoBehaviour
         running = true;
         loading = true;
         waiting = false;
+        time.Start();
     }
     IEnumerator Upload()
     {
