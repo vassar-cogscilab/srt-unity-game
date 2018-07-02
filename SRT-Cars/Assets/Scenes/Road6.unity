@@ -1252,7 +1252,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 719186970}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -90, y: 0, z: -10}
+  m_LocalPosition: {x: -90, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1777995253}
@@ -1783,39 +1783,15 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 994323747}
-  - component: {fileID: 994323746}
   - component: {fileID: 994323748}
+  - component: {fileID: 994323749}
   m_Layer: 0
-  m_Name: GameController
+  m_Name: GAMECONTROLLER
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &994323746
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 994323745}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7105a491d4706c643b3145ef44de9926, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sprites:
-  - {fileID: 0}
-  - {fileID: 21300000, guid: bd3ac449e04b20c4e9e599c849db119b, type: 3}
-  keySprites:
-  - {fileID: 21300000, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
-  - {fileID: 21300002, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
-  - {fileID: 21300004, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
-  - {fileID: 21300006, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
-  - {fileID: 21300008, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
-  - {fileID: 21300010, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
-  - {fileID: 21300012, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
-  - {fileID: 21300014, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
-  cfig: {fileID: 994323748}
 --- !u!4 &994323747
 Transform:
   m_ObjectHideFlags: 0
@@ -1840,12 +1816,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80cf97396716ad14abb480aeb417d1b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Lanes: 4
-  Pattern: 00000000010000000200000003000000010000000200000000000000020000000100000003000000
+  Lanes: 6
+  Pattern: 
   Repetitions: 2
   Random: 0
   RandomRep: 0
-  lanePressed: 00000000
+  lanePressed: 000000000000
+--- !u!114 &994323749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 994323745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53a74148470afd0488c9215cf0fcbd08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprites:
+  - {fileID: 0}
+  - {fileID: 21300000, guid: bd3ac449e04b20c4e9e599c849db119b, type: 3}
+  keySprites:
+  - {fileID: 21300000, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
+  - {fileID: 21300002, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
+  - {fileID: 21300004, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
+  - {fileID: 21300006, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
+  - {fileID: 21300008, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
+  - {fileID: 21300010, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
+  - {fileID: 21300012, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
+  - {fileID: 21300014, guid: 9d229a1b22e6fcd46b9dfc9f7107a765, type: 3}
+  cfig: {fileID: 994323748}
+  grammars: 1
 --- !u!1 &1099355052
 GameObject:
   m_ObjectHideFlags: 0

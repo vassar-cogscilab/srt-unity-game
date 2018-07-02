@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 using System;
 using UnityEngine.SceneManagement;
 
-public class Trial5 : MonoBehaviour
+public class Trial6 : MonoBehaviour
 {
     private bool waiting = false;
     private bool loading = false;
@@ -96,6 +96,7 @@ public class Trial5 : MonoBehaviour
     private Stopwatch time;
     private Text bestScoreText;
     private long bestScore;
+    public int grammars;
 
 
 
@@ -173,20 +174,12 @@ public class Trial5 : MonoBehaviour
         laneButtons = new GameObject[lanes];
         currentSequence = 1;
 
-        sequenceLength = 10;
-        if (cfig.Random == true)
+        sequenceLength = 30;
+        cfig.Pattern = new int[sequenceLength];
+        Grammar(grammars);
+        for (int j = 0; j < cfig.Pattern.Length; j++)
         {
-            for (int i = 0; i<cfig.Repetitions; i++)
-            {
-                Pattern.Push(UnityEngine.Random.Range(0, lanes-1));
-            }
-        }
-        else
-        {
-                for (int j = 0; j < cfig.Pattern.Length; j++)
-                {
-                    Pattern.Push(cfig.Pattern[j]);
-                }
+            Pattern.Push(cfig.Pattern[j]);
         }
         if (lanes <= 2)
         {
@@ -232,7 +225,7 @@ public class Trial5 : MonoBehaviour
             carz[i].transform.position = new Vector3((x1 * i) - (camWidth / 2f) + (x1 / 2), obs.position.y, -11);
             carz[i].transform.localScale = new Vector3(5f / lanes, 5f / lanes, 1);
             shift[i] = Sprite.Instantiate(Locations, shifts) as GameObject;
-            shift[i].transform.position = new Vector3((x1 * i) - (camWidth / 2f) + (x1 / 2), -3, -10);
+            shift[i].transform.position = new Vector3((x1 * i) - (camWidth / 2f) + (x1 / 2), -3, -23);
             sRender = shift[i].GetComponent<SpriteRenderer>();
             sRender.sprite = keySprites[k];
             laneButton.GetComponent<LaneButton>().laneNumber = i;
@@ -603,7 +596,13 @@ public class Trial5 : MonoBehaviour
         yield return new WaitForSecondsRealtime(1);
         startingAnimation.SetInteger("seconds", 1);
         yield return new WaitForSecondsRealtime(1);
+        for (int i = 0; i < lanes; i++)
+        {
+            sRender = shift[i].GetComponent<SpriteRenderer>();
+            sRender.sprite = sprites[0];
+        }
         startingAnimation.SetInteger("seconds", 0);
+        sRender = carz[answer].GetComponent<SpriteRenderer>();
         running = true;
         loading = true;
         time.Start();
@@ -614,19 +613,10 @@ public class Trial5 : MonoBehaviour
         time = new Stopwatch();
         scoreBox.text = ("Time: " + 0);
         endPanel.SetActive(false);
-        if (cfig.Random == true)
+        Grammar(grammars);
+        for (int j = 0; j < cfig.Pattern.Length; j++)
         {
-            for (int i = 0; i < cfig.RandomRep; i++)
-            {
-                Pattern.Push(UnityEngine.Random.Range(0, lanes));
-            }
-        }
-        else
-        {
-            for (int j = 0; j < cfig.Pattern.Length; j++)
-            {
                 Pattern.Push(cfig.Pattern[j]);
-            }
         }
 
         trials = Pattern.Count;
@@ -718,19 +708,170 @@ public class Trial5 : MonoBehaviour
             }
         }
     }
+    void grammar1()
+    {
+       int startingNumber =  UnityEngine.Random.Range(0, lanes - 1);
+        cfig.Pattern[lanes - 1] = startingNumber;
+        int switcher = 0;
+        for(int i = cfig.Pattern.Length -1; i>=0; i--)
+        {
+            if(startingNumber == 0)
+            {
+                startingNumber = 1;
+            }
+            else if (startingNumber == 1)
+            {
+                startingNumber = 2;
+            }
+            else if (startingNumber == 2)
+            {
+                startingNumber = 3;
+            }
+            else if (startingNumber == 3)
+            {
+                startingNumber = UnityEngine.Random.Range(4,6);
+            }
+            else if (startingNumber == 4)
+            {
+                switcher = UnityEngine.Random.Range(0, 2);
+                if (switcher == 0)
+                {
+                    startingNumber = 5;
+                }
+                else
+                {
+                    startingNumber = 0;
+                }
+            }
+            else if (startingNumber == 5)
+            {
+                startingNumber = UnityEngine.Random.Range(0, 2);
+            }
+            cfig.Pattern[i] = startingNumber;
+
+        }
+    }
+    void grammar2()
+    {
+        int startingNumber = UnityEngine.Random.Range(0, lanes - 1);
+        cfig.Pattern[lanes - 1] = startingNumber;
+        int switcher = 0;
+        for (int i = cfig.Pattern.Length - 1; i >= 0; i--)
+        {
+            if (startingNumber == 0)
+            {
+                startingNumber = UnityEngine.Random.Range(1, 3);
+            }
+            else if (startingNumber == 1)
+            {
+                startingNumber = UnityEngine.Random.Range(2, 4);
+            }
+            else if (startingNumber == 2)
+            {
+                startingNumber = UnityEngine.Random.Range(3, 5);
+            }
+            else if (startingNumber == 3)
+            {
+                startingNumber = UnityEngine.Random.Range(4, 6);
+            }
+            else if (startingNumber == 4)
+            {
+                switcher = UnityEngine.Random.Range(0, 2);
+                if (switcher == 0)
+                {
+                    startingNumber = 5;
+                }
+                else
+                {
+                    startingNumber = 0;
+                }
+            }
+            else if (startingNumber == 5)
+            {
+                startingNumber = UnityEngine.Random.Range(0, 2);
+            }
+            cfig.Pattern[i] = startingNumber;
+
+        }
+    }
+    void grammar3()
+    {
+        int startingNumber = UnityEngine.Random.Range(0, lanes - 1);
+        cfig.Pattern[lanes - 1] = startingNumber;
+        int switcher = 0;
+        for (int i = cfig.Pattern.Length - 1; i >= 0; i--)
+        {
+            if (startingNumber == 0)
+            {
+                startingNumber = UnityEngine.Random.Range(1, 4);
+            }
+            else if (startingNumber == 1)
+            {
+                startingNumber = UnityEngine.Random.Range(2, 5);
+            }
+            else if (startingNumber == 2)
+            {
+                startingNumber = UnityEngine.Random.Range(3, 6);
+            }
+            else if (startingNumber == 3)
+            {
+                switcher = UnityEngine.Random.Range(0, 3);
+                if (switcher == 0)
+                {
+                    startingNumber = 4;
+                }
+                else if (switcher == 1)
+                {
+                    startingNumber = 5;
+                }
+                else
+                {
+                    startingNumber = 0;
+                }
+            }
+            else if (startingNumber == 4)
+            {
+                switcher = UnityEngine.Random.Range(0, 3);
+                if (switcher == 0)
+                {
+                    startingNumber = 5;
+                }
+                else if(switcher==1)
+                {
+                    startingNumber = 0;
+                }
+                else
+                {
+                    startingNumber = 1;
+                }
+            }
+            else if (startingNumber == 5)
+            {
+                startingNumber = UnityEngine.Random.Range(0, 3);
+            }
+            cfig.Pattern[i] = startingNumber;
+
+        }
+    }
+
+    void Grammar(int grammar)
+    {
+        if (grammar == 1)
+        {
+            grammar1();   
+        }
+        else if (grammar == 2)
+        {
+            grammar2();
+        }
+        else if (grammar == 3)
+        {
+            grammar3();
+        }
+    }
 }
-//move trial data class into its own script
-[Serializable]
-public class TrialData
-{
-    public int trialIndex;
-    public int sequenceIndex;
-    public int inputPressed;
-    public int block;
-    public int correctInput;
-    public bool wasInputCorrect;
-    public float responseTimes;
-}
+
+
 
 
 
