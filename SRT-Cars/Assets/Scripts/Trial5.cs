@@ -11,7 +11,9 @@ using System.Runtime.InteropServices;
 public class Trial5 : MonoBehaviour
 {
     [DllImport("__Internal")]
-    private static extern void HelloString(string str);
+    private static extern void Upload(string str);
+    [DllImport("__Internal")]
+    private static extern void EndGame();
 
     private bool waiting = false;
     private bool loading = false;
@@ -36,8 +38,7 @@ public class Trial5 : MonoBehaviour
     private int keyPressed;
     private Animator startingAnimation;
     private static Stack<int> Pattern = new Stack<int>();
-    private float trials;
-    private static long totalTrials;
+    //private float trials;
     private int answer;
     private Stopwatch timer;
     private static long totalTime;
@@ -77,20 +78,6 @@ public class Trial5 : MonoBehaviour
     private Text scoreBox;
     private Text remaining;
     private int score;
-    private int scoreMultiplier;
-    private int points;
-    private Stack<int> inputPressed;
-    private Stack<int> correctInput;
-    private Stack<bool> wasInputCorrect;
-    private Stack<float> responseTimes;
-    private Stack<int> sequenceInput;
-    private Stack<int> block;
-    private Stack<int> inputPressed1;
-    private Stack<int> correctInput1;
-    private Stack<bool> wasInputCorrect1;
-    private Stack<float> responseTimes1;
-    private Stack<int> sequenceInput1;
-    private Stack<int> block1;
     private int sequenceLength;
     private int currentSequence;
     public config cfig;
@@ -100,35 +87,27 @@ public class Trial5 : MonoBehaviour
     private Stopwatch time;
     private Text bestScoreText;
     private long bestScore;
-    private int trial;
+    //private int trial;
     private bool end;
     private Quaternion right;
     private Quaternion left;
     private Quaternion center;
+    private AudioSource ambience;
+    private int totalTrials;
 
 
 
 
     private void Awake()
     {
+        totalTrials = 1;
+        ambience = GameObject.Find("Ambience").GetComponent<AudioSource>();
         right = Quaternion.Euler(0, 0, -20);
         left = Quaternion.Euler(0, 0, 20);
         center = Quaternion.Euler(0, 0, 0);
         end = true;
-        trial = 1;
+        //trial = 1;
         bestScore = 0;
-        inputPressed = new Stack<int>();
-        correctInput = new Stack<int>();
-        wasInputCorrect = new Stack<bool>();
-        responseTimes = new Stack<float>();
-        sequenceInput = new Stack<int>();
-        block = new Stack<int>();
-        inputPressed1 = new Stack<int>();
-        correctInput1 = new Stack<int>();
-        wasInputCorrect1 = new Stack<bool>();
-        responseTimes1 = new Stack<float>();
-        sequenceInput1 = new Stack<int>();
-        block1 = new Stack<int>();
         level = 1;
         lanes = cfig.Lanes;
         appearance = 3.8f;
@@ -144,7 +123,6 @@ public class Trial5 : MonoBehaviour
         startButton = GameObject.Find("startButton").GetComponent<Button>();
         nextLevel = GameObject.Find("Next Level").GetComponent<Button>();
         responseTime = GameObject.Find("Response Time").GetComponent<Text>();
-        //percentCorrect = GameObject.Find("Percent Correct").GetComponent<Text>();
         levelText = GameObject.Find("levelnumber").GetComponent<Text>();
         bestScoreText = GameObject.Find("Best Score").GetComponent<Text>();
         endPanel = GameObject.Find("EndScreen");
@@ -166,9 +144,7 @@ public class Trial5 : MonoBehaviour
         laneButton = GameObject.Find("Lane Button");
         scoreBox = GameObject.Find("Score").GetComponent<Text>();
         remaining = GameObject.Find("Remaining").GetComponent<Text>();
-        points = 10;
         score = 0;
-        scoreMultiplier = 1;
         scoreBox.text = ("Time: " + score);
         keys = new string[] { "s", "d", "f", "g", "h", "j", "k", "l" };
         posKeys = new string[lanes];
@@ -263,8 +239,7 @@ public class Trial5 : MonoBehaviour
 
 
         }
-        trials = Pattern.Count;
-        totalTrials = Pattern.Count;
+        //trials = Pattern.Count;
         answer = Pattern.Pop();
         remaining.text = "Remaining: " + Pattern.Count;
         timer = new Stopwatch();
@@ -279,7 +254,6 @@ public class Trial5 : MonoBehaviour
         time = new Stopwatch();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (time.ElapsedMilliseconds > 0)
@@ -545,7 +519,6 @@ public class Trial5 : MonoBehaviour
             {
                 step = obstacleSpeed * Time.deltaTime * 1.5f;
                 lineStep = carSpeed * Time.deltaTime * 1.5f;
-                //road.SetBool("Speeding", true);
                 if (carSpeed < maxSpeed)
                 {
                     carSpeed += speedChange;
@@ -589,15 +562,16 @@ public class Trial5 : MonoBehaviour
         SpeedUp.Play();
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        storage.inputPressed = keyPressed;
-        storage.correctInput = keyPressed;
-        storage.wasInputCorrect = true;
-        storage.responseTimes = timer.ElapsedMilliseconds;
+        storage.srt_input_pressed = keyPressed;
+        storage.correct_input = keyPressed;
+        storage.was_input_correct = true;
+        storage.rt = timer.ElapsedMilliseconds;
         storage.block = level;
-        storage.sequenceIndex = currentSequence;
-        storage.trialIndex = trial;
-        //HelloString(JsonUtility.ToJson(storage));
-        trial = trial + 1;
+        storage.srt_sequence_index = currentSequence;
+        storage.srt_trial_index = totalTrials;
+        Upload(JsonUtility.ToJson(storage));
+        totalTrials = totalTrials + 1;
+        // trial = trial + 1;
         currentSequence++;
         if (currentSequence > sequenceLength)
         {
@@ -612,16 +586,16 @@ public class Trial5 : MonoBehaviour
         TrialData storage = new TrialData();
         SpeedUp.Play();
         totalTime = totalTime + timer.ElapsedMilliseconds;
-        storage.inputPressed = keyPressed;
-        storage.correctInput = answer;
-        storage.wasInputCorrect = false;
-        storage.responseTimes = timer.ElapsedMilliseconds;
+        storage.srt_input_pressed = keyPressed;
+        storage.correct_input = answer;
+        storage.was_input_correct = false;
+        storage.rt = timer.ElapsedMilliseconds;
         storage.block = level;
-        storage.sequenceIndex = currentSequence;
-        storage.trialIndex = trial;
-        trial = trial + 1;
-        trials += 1;
-        //HelloString(JsonUtility.ToJson(storage));
+        storage.srt_sequence_index = currentSequence;
+        storage.srt_trial_index = totalTrials;
+        //trial = trial + 1;
+        //trials += 1;
+        Upload(JsonUtility.ToJson(storage));
         loading = false;
     }
 
@@ -630,17 +604,18 @@ public class Trial5 : MonoBehaviour
         time.Stop();
         TrialData storage = new TrialData();
         levelText.text = "Attempt " + level + " Complete!";
-        storage.inputPressed = keyPressed;
-        storage.correctInput = answer;
-        storage.wasInputCorrect = true;
-        storage.responseTimes = timer.ElapsedMilliseconds;
+        storage.srt_input_pressed = keyPressed;
+        storage.correct_input = answer;
+        storage.was_input_correct = true;
+        storage.rt = timer.ElapsedMilliseconds;
         storage.block = level;
-        storage.sequenceIndex = currentSequence;
+        storage.srt_sequence_index = currentSequence;
         currentSequence = 1;
-        storage.trialIndex = trial;
-        trial = 1;
-        trials += 1;
-        //HelloString(JsonUtility.ToJson(storage));
+        storage.srt_trial_index =  totalTrials;
+        //trial = 1;
+        //trials += 1;
+        Upload(JsonUtility.ToJson(storage));
+        totalTrials = totalTrials + 1;
         level++;
         running = false;
         SpeedUp.Play();
@@ -672,7 +647,10 @@ public class Trial5 : MonoBehaviour
         }
         else
         {
-            SceneManager.LoadScene(0);
+            //SceneManager.LoadScene(0);
+            cam.enabled = false;
+            ambience.Stop();
+            EndGame();
         }
     }
     IEnumerator begining()
@@ -714,8 +692,7 @@ public class Trial5 : MonoBehaviour
             }
         }
 
-        trials = Pattern.Count;
-        totalTrials = Pattern.Count;
+        //trials = Pattern.Count;
         answer = Pattern.Pop();
         remaining.text = "Remaining: " + Pattern.Count;
         timer = new Stopwatch();
@@ -741,13 +718,13 @@ public class Trial5 : MonoBehaviour
 [Serializable]
 public class TrialData
 {
-    public int trialIndex;
-    public int sequenceIndex;
-    public int inputPressed;
+    public int srt_trial_index;
+    public int srt_sequence_index;
+    public int srt_input_pressed;
     public int block;
-    public int correctInput;
-    public bool wasInputCorrect;
-    public float responseTimes;
+    public int correct_input;
+    public bool was_input_correct;
+    public float rt;
 }
 
 

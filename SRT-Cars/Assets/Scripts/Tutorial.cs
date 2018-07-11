@@ -31,9 +31,6 @@ public class Tutorial : MonoBehaviour
     private int answer;
     private float road;
     private int maxSpeed;
-    private int midSpeed;
-    private int minSpeed;
-    private float speedChange;
     private bool restarting = false;
     private float carSpeed;
     private float obstacleSpeed;
@@ -68,7 +65,6 @@ public class Tutorial : MonoBehaviour
     private int sequenceLength;
     private int currentSequence;
     public config cfig;
-    private string level;
     private Text levelText;
     private Stopwatch time;
 
@@ -108,7 +104,6 @@ public class Tutorial : MonoBehaviour
         Tutorial5 = GameObject.Find("Tutorial 5");
         Continue = GameObject.Find("continue").GetComponent<Button>();
         Continue1 = GameObject.Find("continue1").GetComponent<Button>();
-        //Continue2 = GameObject.Find("continue2").GetComponent<Button>();
         Continue3 = GameObject.Find("continue3").GetComponent<Button>();
         remaining = GameObject.Find("Remaining").GetComponent<Text>();
         remaining.text = ("Remaining: " + 1);
@@ -123,10 +118,8 @@ public class Tutorial : MonoBehaviour
         Tutorial5.SetActive(false);
         Continue.onClick.AddListener(nextStep);
         Continue1.onClick.AddListener(stepTwo);
-        //Continue2.onClick.AddListener(stepThree);
         Continue3.onClick.AddListener(stepFour);
         //
-        level = "Tutorial";
         lanes = cfig.Lanes;
        
         obstacles = GameObject.Find("Obstacles");
@@ -153,7 +146,6 @@ public class Tutorial : MonoBehaviour
         Locations = GameObject.Find("LocationsChild");
         laneButton = GameObject.Find("Lane Button");
         scoreBox = GameObject.Find("Score").GetComponent<Text>();
-        //Multiplier = GameObject.Find("Multiplier").GetComponent<Text>();
         score = 0;
         scoreBox.text = ("Time: " + score);
         keys = new string[] { "s", "d", "f", "g", "h", "j", "k", "l" };
@@ -162,9 +154,6 @@ public class Tutorial : MonoBehaviour
         float camWidth = camHeight * cam.aspect;
         float x1 = camWidth / (lanes);
         maxSpeed = 16;
-        midSpeed = 11;
-        minSpeed = 2;
-        speedChange = 1f;
         shiftSpeed = 40;
         obstacles.transform.position = startPoint.position;
         carz = new GameObject[lanes];

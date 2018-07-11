@@ -4,8 +4,12 @@ mergeInto(LibraryManager.library, {
     window.alert("Hello, world!");
   },
 
-  HelloString: function (str) {
+  Upload: function (str) {
     window.unityGetData(Pointer_stringify(str));
+  },
+
+  EndGame: function(){
+    window.unityEndGame();
   },
 
   PrintFloatArray: function (array, size) {

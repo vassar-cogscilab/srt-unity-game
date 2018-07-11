@@ -1843,7 +1843,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Lanes: 4
   Pattern: 00000000010000000200000003000000010000000200000000000000020000000100000003000000
-  Repetitions: 10
+  Repetitions: 1
   Random: 0
   RandomRep: 0
   Attempts: 2

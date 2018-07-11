@@ -41,7 +41,7 @@ public class Trial6 : MonoBehaviour
     private Animator startingAnimation;
     private static Stack<int> Pattern = new Stack<int>();
     private float trials;
-    private static long totalTrials;
+    //private static long totalTrials;
     private int answer;
     private Stopwatch timer;
     private static long totalTime;
@@ -81,8 +81,8 @@ public class Trial6 : MonoBehaviour
     //private Text Multiplier;
     private int score;
    // private int Streak;
-    private int scoreMultiplier;
-    private Stack<int> inputPressed;
+    //private int scoreMultiplier;
+    /*private Stack<int> inputPressed;
     private Stack<int> correctInput;
     private Stack<bool> wasInputCorrect;
     private Stack<float> responseTimes;
@@ -93,7 +93,7 @@ public class Trial6 : MonoBehaviour
     private Stack<bool> wasInputCorrect1;
     private Stack<float> responseTimes1;
     private Stack<int> sequenceInput1;
-    private Stack<int> block1;
+    private Stack<int> block1;*/
     private int sequenceLength;
     private int currentSequence;
     public config cfig;
@@ -113,7 +113,7 @@ public class Trial6 : MonoBehaviour
     {
         trial = 1;
         bestScore = 0;
-        inputPressed = new Stack<int>();
+        /*inputPressed = new Stack<int>();
         correctInput = new Stack<int>();
         wasInputCorrect = new Stack<bool>();
         responseTimes = new Stack<float>();
@@ -124,7 +124,7 @@ public class Trial6 : MonoBehaviour
         wasInputCorrect1 = new Stack<bool>();
         responseTimes1 = new Stack<float>();
         sequenceInput1 = new Stack<int>();
-        block1 = new Stack<int>();
+        block1 = new Stack<int>();*/
         level = 1;
         lanes = cfig.Lanes;
         appearance = 3.8f;
@@ -163,7 +163,7 @@ public class Trial6 : MonoBehaviour
         scoreBox = GameObject.Find("Score").GetComponent<Text>();
         //Multiplier = GameObject.Find("Multiplier").GetComponent<Text>();
         score = 0;
-        scoreMultiplier = 1;
+        //scoreMultiplier = 1;
         scoreBox.text = ("Time: " + score);
         keys = new string[] { "s", "d", "f", "g", "h", "j", "k", "l" };
         posKeys = new string[lanes];
@@ -246,7 +246,7 @@ public class Trial6 : MonoBehaviour
 
         }
         trials = Pattern.Count;
-        totalTrials = Pattern.Count;
+        //totalTrials = Pattern.Count;
         answer = Pattern.Pop();
         timer = new Stopwatch();
         sRender = carz[answer].GetComponent<SpriteRenderer>();
@@ -512,20 +512,14 @@ public class Trial6 : MonoBehaviour
         SpeedUp.Play();
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        storage.inputPressed = keyPressed;
-        storage.correctInput = keyPressed;
-        storage.wasInputCorrect = true;
-        storage.responseTimes = timer.ElapsedMilliseconds;
+        storage.srt_input_pressed = keyPressed;
+        storage.correct_input = keyPressed;
+        storage.was_input_correct = true;
+        storage.rt = timer.ElapsedMilliseconds;
         storage.block = level;
-        storage.sequenceIndex = currentSequence;
-        storage.trialIndex = trial;
+        storage.srt_sequence_index = currentSequence;
+        storage.srt_trial_index = trial;
 
-        //inputPressed.Push(keyPressed);
-        //correctInput.Push(keyPressed);
-        //wasInputCorrect.Push(true);
-        //responseTimes.Push(timer.ElapsedMilliseconds);
-        //sequenceInput.Push(currentSequence);
-        //block.Push(level);
         HelloString(JsonUtility.ToJson(storage));
         trial = trial + 1;
         currentSequence++;
@@ -542,22 +536,16 @@ public class Trial6 : MonoBehaviour
         TrialData storage = new TrialData();
         SpeedUp.Play();
         totalTime = totalTime + timer.ElapsedMilliseconds;
-        storage.inputPressed = keyPressed;
-        storage.correctInput = answer;
-        storage.wasInputCorrect = false;
-        storage.responseTimes = timer.ElapsedMilliseconds;
+        storage.srt_input_pressed = keyPressed;
+        storage.correct_input = answer;
+        storage.was_input_correct = false;
+        storage.rt = timer.ElapsedMilliseconds;
         storage.block = level;
-        storage.sequenceIndex = currentSequence;
-        storage.trialIndex = trial;
+        storage.srt_sequence_index = currentSequence;
+        storage.srt_trial_index = trial;
         trial = trial + 1;
         trials += 1;
         HelloString(JsonUtility.ToJson(storage));
-        /*inputPressed.Push(keyPressed);
-        correctInput.Push(answer);
-        wasInputCorrect.Push(false);
-        block.Push(level);
-        responseTimes.Push(timer.ElapsedMilliseconds);
-        sequenceInput.Push(currentSequence);*/
         loading = false;
     }
 
@@ -566,14 +554,14 @@ public class Trial6 : MonoBehaviour
         time.Stop();
         TrialData storage = new TrialData();
         levelText.text = "Level " + level + " Complete!";
-        storage.inputPressed = keyPressed;
-        storage.correctInput = answer;
-        storage.wasInputCorrect = true;
-        storage.responseTimes = timer.ElapsedMilliseconds;
+        storage.srt_input_pressed = keyPressed;
+        storage.correct_input = answer;
+        storage.was_input_correct = true;
+        storage.rt = timer.ElapsedMilliseconds;
         storage.block = level;
-        storage.sequenceIndex = currentSequence;
+        storage.srt_sequence_index = currentSequence;
         currentSequence = 1;
-        storage.trialIndex = trial;
+        storage.srt_trial_index = trial;
         trial = 1;
         trials += 1;
         HelloString(JsonUtility.ToJson(storage));
@@ -582,7 +570,6 @@ public class Trial6 : MonoBehaviour
         SpeedUp.Play();
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        //percentCorrect.text = ((totalTrials / trials) * 100 + "% correct");
         responseTime.text = "You completed the level in " + time.ElapsedMilliseconds / 1000f + " seconds" ;
         if ((time.ElapsedMilliseconds < bestScore) || (bestScore == 0))
         {
@@ -590,18 +577,6 @@ public class Trial6 : MonoBehaviour
             bestScoreText.text = "Best Score: " + bestScore / 1000f;
         }
         UnityEngine.Debug.Log(responseTime.text);
-        //UnityEngine.Debug.Log(percentCorrect.text);
-       /* inputPressed.Push(keyPressed);
-        correctInput.Push(keyPressed);
-        wasInputCorrect.Push(true);
-        responseTimes.Push(timer.ElapsedMilliseconds);
-        sequenceInput.Push(currentSequence);
-        currentSequence++;
-        if (currentSequence > sequenceLength)
-        {
-            currentSequence = 1;
-        }
-        StartCoroutine(Upload());*/
         if (level > cfig.Attempts)
         {
             levelText.text = "All Levels Completed";
@@ -656,7 +631,6 @@ public class Trial6 : MonoBehaviour
         }
 
         trials = Pattern.Count;
-        totalTrials = Pattern.Count;
         answer = Pattern.Pop();
         timer = new Stopwatch();
         sRender.sprite = sprites[1];
