@@ -8,7 +8,7 @@ using System;
 using UnityEngine.SceneManagement;
 using System.Runtime.InteropServices;
 
-public class Trial5 : MonoBehaviour
+public class Trial7 : MonoBehaviour
 {
     [DllImport("__Internal")]
     private static extern void Upload(string str);
@@ -92,12 +92,16 @@ public class Trial5 : MonoBehaviour
     private Quaternion center;
     private AudioSource ambience;
     private int totalTrials;
+    private Progress progress;
+    private int lives;
 
 
 
 
     private void Awake()
     {
+        lives = 1;
+        progress = GameObject.Find("Progress").GetComponent<Progress>();
         totalTrials = 1;
         ambience = GameObject.Find("Ambience").GetComponent<AudioSource>();
         right = Quaternion.Euler(0, 0, -20);
@@ -221,7 +225,7 @@ public class Trial5 : MonoBehaviour
         {
             carz[i] = Sprite.Instantiate(obstacle1, obs) as GameObject;
             carz[i].transform.position = new Vector3((x1 * i) - (camWidth / 2f) + (x1 / 2), obs.position.y, -11);
-            carz[i].transform.localScale = new Vector3(3f / lanes, 3f / lanes, 1);
+            carz[i].transform.localScale = new Vector3(5f / lanes, 5f / lanes, 1);
             shift[i] = Sprite.Instantiate(Locations, shifts) as GameObject;
             shift[i].transform.position = new Vector3((x1 * i) - (camWidth / 2f) + (x1 / 2), -3, -10);
             sRender = shift[i].GetComponent<SpriteRenderer>();
@@ -247,7 +251,7 @@ public class Trial5 : MonoBehaviour
         carSpeed = maxSpeed;
         originalSpeed = 10;
         car.transform.position = (shift[keyPressed].transform.position);
-        car.transform.localScale = new Vector3(3f/ lanes, 3f / lanes, 1);
+        car.transform.localScale = new Vector3(5f/ lanes, 5f / lanes, 1);
         time = new Stopwatch();
     }
 
@@ -579,25 +583,58 @@ public class Trial5 : MonoBehaviour
     }
     void wrongAnswer()
     {
-        TrialData storage = new TrialData();
-        SpeedUp.Play();
-        totalTime = totalTime + timer.ElapsedMilliseconds;
-        storage.srt_input_pressed = keyPressed;
-        storage.correct_input = answer;
-        storage.was_input_correct = false;
-        storage.rt = timer.ElapsedMilliseconds;
-        storage.block = level;
-        storage.srt_sequence_index = currentSequence;
-        storage.srt_trial_index = totalTrials;
-        //Upload(JsonUtility.ToJson(storage));
-        loading = false;
+        lives = lives - 1;
+        if (lives == 0)
+        {
+            time.Stop();
+            end = true;
+            running = false;
+            carSpeed = 0;
+            responseTime.text = "";
+            bestScoreText.text = "";
+            levelText.text = "Level Failed";
+            endPanel.SetActive(true);
+            TrialData storage = new TrialData();
+            totalTime = totalTime + timer.ElapsedMilliseconds;
+            storage.srt_input_pressed = keyPressed;
+            storage.correct_input = answer;
+            storage.was_input_correct = false;
+            storage.rt = timer.ElapsedMilliseconds;
+            storage.block = level;
+            storage.srt_sequence_index = currentSequence;
+            storage.srt_trial_index = totalTrials;
+            //Upload(JsonUtility.ToJson(storage));
+            loading = false;
+        }
+        else
+        {
+            TrialData storage = new TrialData();
+            SpeedUp.Play();
+            totalTime = totalTime + timer.ElapsedMilliseconds;
+            storage.srt_input_pressed = keyPressed;
+            storage.correct_input = answer;
+            storage.was_input_correct = false;
+            storage.rt = timer.ElapsedMilliseconds;
+            storage.block = level;
+            storage.srt_sequence_index = currentSequence;
+            storage.srt_trial_index = totalTrials;
+            //Upload(JsonUtility.ToJson(storage));
+            loading = false;
+        }
     }
 
     void endCorrectAnswer()
     {
         time.Stop();
+        if (time.ElapsedMilliseconds < 19)
+        {
+            levelText.text = "Level 2 Unlocked";
+            progress.level2 = true;
+            nextLevel.gameObject.SetActive(true);
+        }
+
         TrialData storage = new TrialData();
-        levelText.text = "Attempt " + level + " Complete!";
+        levelText.text = "You took too long Try Again";
         storage.srt_input_pressed = keyPressed;
         storage.correct_input = answer;
         storage.was_input_correct = true;
@@ -605,8 +642,8 @@ public class Trial5 : MonoBehaviour
         storage.block = level;
         storage.srt_sequence_index = currentSequence;
         currentSequence = 1;
-        storage.srt_trial_index =  totalTrials;
-        Upload(JsonUtility.ToJson(storage));
+        storage.srt_trial_index = totalTrials;
+        //Upload(JsonUtility.ToJson(storage));
         totalTrials = totalTrials + 1;
         level++;
         running = false;
@@ -703,18 +740,6 @@ public class Trial5 : MonoBehaviour
         time.Start();
     }
 
-}
-//move trial data class into its own script
-[Serializable]
-public class TrialData
-{
-    public int srt_trial_index;
-    public int srt_sequence_index;
-    public int srt_input_pressed;
-    public int block;
-    public int correct_input;
-    public bool was_input_correct;
-    public float rt;
 }
 
 

@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: d89989398c0015540b959a8f85d74b3f
+timeCreated: 1532361721
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Roadgeek 2005 Engschrift
+  fontNames:
+  - Roadgeek 2005 Engschrift
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
