@@ -202,7 +202,7 @@ public class Tutorial : MonoBehaviour
         {
             carz[i] = Sprite.Instantiate(obstacle1, obs) as GameObject;
             carz[i].transform.position = new Vector3((x1 * i) - (camWidth / 2f) + (x1 / 2), obs.position.y, -11);
-            carz[i].transform.localScale = new Vector3(5f / lanes, 5f / lanes, 1);
+            carz[i].transform.localScale = new Vector3(2.5f / lanes, 2.5f / lanes, 1);
             shift[i] = Sprite.Instantiate(Locations, shifts) as GameObject;
             shift[i].transform.position = new Vector3((x1 * i) - (camWidth / 2f) + (x1 / 2), -3, -23);
             sRender = shift[i].GetComponent<SpriteRenderer>();
@@ -223,7 +223,7 @@ public class Tutorial : MonoBehaviour
         startButton.onClick.AddListener(beginLevel);
         carSpeed = maxSpeed;
         originalSpeed = 10;
-        car.transform.localScale = new Vector3(5f / lanes, 5f / lanes, 1);
+        car.transform.localScale = new Vector3(2.5f / lanes, 2.5f / lanes, 1);
         time = new Stopwatch();
     }
     void Update()

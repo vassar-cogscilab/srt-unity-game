@@ -8,7 +8,7 @@ public class config : MonoBehaviour {
     public int[] Pattern;
     public int Repetitions;
     public bool Random;
-    public int RandomRep;
     public int Attempts;
     public bool[] lanePressed;
+    public string Experiment;
 }

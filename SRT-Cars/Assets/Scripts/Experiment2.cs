@@ -8,14 +8,12 @@ using System;
 using UnityEngine.SceneManagement;
 using System.Runtime.InteropServices;
 
-public class Trial6 : MonoBehaviour
+public class Experiment2 : MonoBehaviour
 {
     [DllImport("__Internal")]
-    private static extern void Hello();
+    private static extern void Upload(string str);
     [DllImport("__Internal")]
-    private static extern void HelloString(string str);
-    [DllImport("__Internal")]
-    private static extern int AddNumbers(int x, int y);
+    private static extern void EndGame();
 
     private bool waiting = false;
     private bool loading = false;
@@ -40,8 +38,6 @@ public class Trial6 : MonoBehaviour
     private int keyPressed;
     private Animator startingAnimation;
     private static Stack<int> Pattern = new Stack<int>();
-    private float trials;
-    //private static long totalTrials;
     private int answer;
     private Stopwatch timer;
     private static long totalTime;
@@ -64,6 +60,7 @@ public class Trial6 : MonoBehaviour
     private GameObject obstacle1;
     private GameObject[] carz;
     private GameObject[] shift;
+    private GameObject[] endShift;
     private GameObject[] laneButtons;
     private Transform pos;
     private Transform obs;
@@ -78,22 +75,8 @@ public class Trial6 : MonoBehaviour
     private string[] posKeys;
     private int j;
     private Text scoreBox;
-    //private Text Multiplier;
+    private Text remaining;
     private int score;
-   // private int Streak;
-    //private int scoreMultiplier;
-    /*private Stack<int> inputPressed;
-    private Stack<int> correctInput;
-    private Stack<bool> wasInputCorrect;
-    private Stack<float> responseTimes;
-    private Stack<int> sequenceInput;
-    private Stack<int> block;
-    private Stack<int> inputPressed1;
-    private Stack<int> correctInput1;
-    private Stack<bool> wasInputCorrect1;
-    private Stack<float> responseTimes1;
-    private Stack<int> sequenceInput1;
-    private Stack<int> block1;*/
     private int sequenceLength;
     private int currentSequence;
     public config cfig;
@@ -103,28 +86,27 @@ public class Trial6 : MonoBehaviour
     private Stopwatch time;
     private Text bestScoreText;
     private long bestScore;
+    private bool end;
+    private Quaternion right;
+    private Quaternion left;
+    private Quaternion center;
+    private AudioSource ambience;
+    private int totalTrials;
     public int grammars;
-    private int trial;
 
 
 
 
     private void Awake()
     {
-        trial = 1;
+        totalTrials = 1;
+        ambience = GameObject.Find("Ambience").GetComponent<AudioSource>();
+        right = Quaternion.Euler(0, 0, -20);
+        left = Quaternion.Euler(0, 0, 20);
+        center = Quaternion.Euler(0, 0, 0);
+        end = true;
+        //trial = 1;
         bestScore = 0;
-        /*inputPressed = new Stack<int>();
-        correctInput = new Stack<int>();
-        wasInputCorrect = new Stack<bool>();
-        responseTimes = new Stack<float>();
-        sequenceInput = new Stack<int>();
-        block = new Stack<int>();
-        inputPressed1 = new Stack<int>();
-        correctInput1 = new Stack<int>();
-        wasInputCorrect1 = new Stack<bool>();
-        responseTimes1 = new Stack<float>();
-        sequenceInput1 = new Stack<int>();
-        block1 = new Stack<int>();*/
         level = 1;
         lanes = cfig.Lanes;
         appearance = 3.8f;
@@ -140,7 +122,6 @@ public class Trial6 : MonoBehaviour
         startButton = GameObject.Find("startButton").GetComponent<Button>();
         nextLevel = GameObject.Find("Next Level").GetComponent<Button>();
         responseTime = GameObject.Find("Response Time").GetComponent<Text>();
-        //percentCorrect = GameObject.Find("Percent Correct").GetComponent<Text>();
         levelText = GameObject.Find("levelnumber").GetComponent<Text>();
         bestScoreText = GameObject.Find("Best Score").GetComponent<Text>();
         endPanel = GameObject.Find("EndScreen");
@@ -161,15 +142,14 @@ public class Trial6 : MonoBehaviour
         Locations = GameObject.Find("LocationsChild");
         laneButton = GameObject.Find("Lane Button");
         scoreBox = GameObject.Find("Score").GetComponent<Text>();
-        //Multiplier = GameObject.Find("Multiplier").GetComponent<Text>();
+        remaining = GameObject.Find("Remaining").GetComponent<Text>();
         score = 0;
-        //scoreMultiplier = 1;
         scoreBox.text = ("Time: " + score);
         keys = new string[] { "s", "d", "f", "g", "h", "j", "k", "l" };
         posKeys = new string[lanes];
         float camHeight = cam.orthographicSize * 1.9f;
         float camWidth = camHeight * cam.aspect;
-        float x1 = camWidth/(lanes);
+        float x1 = camWidth / (lanes);
         appearance = 3.8f;
         maxSpeed = 16;
         midSpeed = 11;
@@ -179,10 +159,11 @@ public class Trial6 : MonoBehaviour
         obstacles.transform.position = startPoint.position;
         carz = new GameObject[lanes];
         shift = new GameObject[lanes];
+        endShift = new GameObject[lanes];
         laneButtons = new GameObject[lanes];
         currentSequence = 1;
 
-        sequenceLength = 10;
+        sequenceLength = 100;
         cfig.Pattern = new int[sequenceLength];
         Grammar(grammars);
         for (int j = 0; j < cfig.Pattern.Length; j++)
@@ -206,48 +187,49 @@ public class Trial6 : MonoBehaviour
             j = 0;
         }
         int k = j;
-        for (int i = 0; i<lanes; i++)
-        { 
+        for (int i = 0; i < lanes; i++)
+        {
             posKeys[i] = keys[k];
             k++;
         }
-            for (float i = 0 - ((lanes) / 2f); i <= ((lanes) / 2f); i++)
+        for (float i = 0 - ((lanes) / 2f); i <= ((lanes) / 2f); i++)
+        {
+            if (i == (0 - (lanes) / 2f))
             {
-                if (i == (0 - (lanes) / 2f))
-                {
-                    Sprite.Instantiate(yellowLines, pos).transform.position = new Vector3(x1 * i, 0, 0);
-                }
-                else if (i == ((lanes) / 2f))
-                {
-                    Sprite.Instantiate(whiteLine, pos).transform.position = new Vector3(x1 * i, 0, 0);
-                }
-                else
-                {
-                    Sprite.Instantiate(seperators, pos).transform.position = new Vector3(x1 * i, 0, 0);
-                }
+                Sprite.Instantiate(yellowLines, pos).transform.position = new Vector3(x1 * i, 0, 0);
             }
+            else if (i == ((lanes) / 2f))
+            {
+                Sprite.Instantiate(whiteLine, pos).transform.position = new Vector3(x1 * i, 0, 0);
+            }
+            else
+            {
+                Sprite.Instantiate(seperators, pos).transform.position = new Vector3(x1 * i, 0, 0);
+            }
+        }
         k = j;
-            for(int i = 0; i< lanes; i++)
+        for (int i = 0; i < lanes; i++)
         {
             carz[i] = Sprite.Instantiate(obstacle1, obs) as GameObject;
             carz[i].transform.position = new Vector3((x1 * i) - (camWidth / 2f) + (x1 / 2), obs.position.y, -11);
-            carz[i].transform.localScale = new Vector3(5f / lanes, 5f / lanes, 1);
+            carz[i].transform.localScale = new Vector3(2.5f / lanes, 2.5f / lanes, 1);
             shift[i] = Sprite.Instantiate(Locations, shifts) as GameObject;
-            shift[i].transform.position = new Vector3((x1 * i) - (camWidth / 2f) + (x1 / 2), -3, -23);
+            shift[i].transform.position = new Vector3((x1 * i) - (camWidth / 2f) + (x1 / 2), -3, -10);
             sRender = shift[i].GetComponent<SpriteRenderer>();
             sRender.sprite = keySprites[k];
+            endShift[i] = Sprite.Instantiate(Locations, shifts) as GameObject;
+            endShift[i].transform.position = new Vector3((x1 * i) - (camWidth / 2f) + (x1 / 2), 5, -10);
             laneButton.GetComponent<LaneButton>().laneNumber = i;
             laneButtons[i] = Sprite.Instantiate(laneButton, ButtonStorage) as GameObject;
-            laneButtons[i].transform.position = new Vector3((x1 * i) - (camWidth / 2f)+(x1/2), -3, -10);
+            laneButtons[i].transform.position = new Vector3((x1 * i) - (camWidth / 2f) + (x1 / 2), -3, -10);
             laneButtons[i].transform.localScale = new Vector3(10f / lanes, 10f / lanes, 1);
             k++;
 
 
 
         }
-        trials = Pattern.Count;
-        //totalTrials = Pattern.Count;
         answer = Pattern.Pop();
+        remaining.text = "Remaining: " + Pattern.Count;
         timer = new Stopwatch();
         sRender = carz[answer].GetComponent<SpriteRenderer>();
         sRender.sprite = sprites[0];
@@ -255,12 +237,11 @@ public class Trial6 : MonoBehaviour
         nextLevel.onClick.AddListener(StartLevel);
         carSpeed = maxSpeed;
         originalSpeed = 10;
-        //car.transform.position = (shift[keyPressed].transform.position);
-        car.transform.localScale = new Vector3(5f/ lanes, 5f / lanes, 1);
+        car.transform.position = (shift[keyPressed].transform.position);
+        car.transform.localScale = new Vector3(2.5f / lanes, 2.5f / lanes, 1);
         time = new Stopwatch();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (time.ElapsedMilliseconds > 0)
@@ -282,10 +263,22 @@ public class Trial6 : MonoBehaviour
         {
             if ((waiting) && (!loading) && running)
             {
-                step = obstacleSpeed * Time.deltaTime * 1.5f;
-                lineStep = carSpeed * Time.deltaTime * 1.5f;
+                step = obstacleSpeed * Time.deltaTime * 3f;
+                lineStep = carSpeed * Time.deltaTime * 3f;
                 car.transform.position = Vector3.MoveTowards(car.transform.position, shift[answer].transform.position, shifting);
                 obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
+                if (car.transform.position.x > shift[answer].transform.position.x)
+                {
+                    car.transform.rotation = Quaternion.Slerp(car.transform.rotation, left, 1);
+                }
+                else if (car.transform.position.x < shift[answer].transform.position.x)
+                {
+                    car.transform.rotation = Quaternion.Slerp(car.transform.rotation, right, 1);
+                }
+                else
+                {
+                    car.transform.rotation = Quaternion.Slerp(car.transform.rotation, center, 1);
+                }
                 if (carSpeed < maxSpeed)
                 {
                     carSpeed += speedChange;
@@ -296,6 +289,7 @@ public class Trial6 : MonoBehaviour
                     loading = true;
                     sRender.sprite = sprites[1];
                     answer = Pattern.Pop();
+                    remaining.text = "Remaining: " + Pattern.Count;
                     sRender = carz[answer].GetComponent<SpriteRenderer>();
                     sRender.sprite = sprites[0];
                     obstacles.transform.position = startPoint.position;
@@ -347,6 +341,7 @@ public class Trial6 : MonoBehaviour
                             wrongAnswer();
                             SpeedUp.Stop();
                             brake.Play();
+                            car.transform.rotation = Quaternion.Slerp(car.transform.rotation, center, 1);
                         }
 
                     }
@@ -362,6 +357,18 @@ public class Trial6 : MonoBehaviour
                 if (!restarting)
                 {
                     car.transform.position = Vector3.MoveTowards(car.transform.position, shift[keyPressed].transform.position, shifting);
+                    if (car.transform.position.x > shift[keyPressed].transform.position.x)
+                    {
+                        car.transform.rotation = Quaternion.Slerp(car.transform.rotation, left, 1);
+                    }
+                    else if (car.transform.position.x < shift[keyPressed].transform.position.x)
+                    {
+                        car.transform.rotation = Quaternion.Slerp(car.transform.rotation, right, 1);
+                    }
+                    else
+                    {
+                        car.transform.rotation = Quaternion.Slerp(car.transform.rotation, center, 1);
+                    }
                     if (carSpeed < maxSpeed)
                     {
                         carSpeed += speedChange;
@@ -370,6 +377,7 @@ public class Trial6 : MonoBehaviour
                     {
                         SpeedUp.Stop();
                         brake.Play();
+                        car.transform.rotation = Quaternion.Slerp(car.transform.rotation, center, 1);
                         restarting = true;
                     }
                 }
@@ -445,6 +453,7 @@ public class Trial6 : MonoBehaviour
                             wrongAnswer();
                             SpeedUp.Stop();
                             brake.Play();
+                            car.transform.rotation = Quaternion.Slerp(car.transform.rotation, center, 1);
                         }
 
                     }
@@ -460,6 +469,18 @@ public class Trial6 : MonoBehaviour
                 if (!restarting)
                 {
                     car.transform.position = Vector3.MoveTowards(car.transform.position, shift[keyPressed].transform.position, shifting);
+                    if (car.transform.position.x > shift[keyPressed].transform.position.x)
+                    {
+                        car.transform.rotation = Quaternion.Slerp(car.transform.rotation, left, 1);
+                    }
+                    else if (car.transform.position.x < shift[keyPressed].transform.position.x)
+                    {
+                        car.transform.rotation = Quaternion.Slerp(car.transform.rotation, right, 1);
+                    }
+                    else
+                    {
+                        car.transform.rotation = Quaternion.Slerp(car.transform.rotation, center, 1);
+                    }
                     if (carSpeed < maxSpeed)
                     {
                         carSpeed += speedChange;
@@ -468,6 +489,7 @@ public class Trial6 : MonoBehaviour
                     {
                         SpeedUp.Stop();
                         brake.Play();
+                        car.transform.rotation = Quaternion.Slerp(car.transform.rotation, center, 1);
                         restarting = true;
                     }
                 }
@@ -489,23 +511,43 @@ public class Trial6 : MonoBehaviour
             {
                 step = obstacleSpeed * Time.deltaTime * 1.5f;
                 lineStep = carSpeed * Time.deltaTime * 1.5f;
-                //road.SetBool("Speeding", true);
                 if (carSpeed < maxSpeed)
                 {
                     carSpeed += speedChange;
                 }
-                car.transform.position = Vector3.MoveTowards(car.transform.position, shift[answer].transform.position, shifting);
-                obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
-                if (obstacles.transform.position.y == endPoint.position.y)
+                if (end)
+                {
+                    car.transform.position = Vector3.MoveTowards(car.transform.position, shift[answer].transform.position, shifting);
+                    if (car.transform.position.x > shift[answer].transform.position.x)
+                    {
+                        car.transform.rotation = Quaternion.Slerp(car.transform.rotation, left, 1);
+                    }
+                    else if (car.transform.position.x < shift[answer].transform.position.x)
+                    {
+                        car.transform.rotation = Quaternion.Slerp(car.transform.rotation, right, 1);
+                    }
+                    else
+                    {
+                        car.transform.rotation = Quaternion.Slerp(car.transform.rotation, center, 1);
+                    }
+                    obstacles.transform.position = Vector2.MoveTowards(obstacles.transform.position, endPoint.position, step);
+                }
+                else
                 {
                     endPanel.SetActive(true);
+                    car.transform.position = Vector3.MoveTowards(car.transform.position, endShift[answer].transform.position, shifting);
                 }
+                if (obstacles.transform.position.y == endPoint.position.y)
+                {
+                    end = false;
+                }
+
             }
 
-            
+
         }
     }
-    
+
     void correctAnswer()
     {
         TrialData storage = new TrialData();
@@ -518,10 +560,10 @@ public class Trial6 : MonoBehaviour
         storage.rt = timer.ElapsedMilliseconds;
         storage.block = level;
         storage.srt_sequence_index = currentSequence;
-        storage.srt_trial_index = trial;
-
-        HelloString(JsonUtility.ToJson(storage));
-        trial = trial + 1;
+        storage.srt_trial_index = totalTrials;
+        storage.experiment = cfig.Experiment;
+        Upload(JsonUtility.ToJson(storage));
+        totalTrials = totalTrials + 1;
         currentSequence++;
         if (currentSequence > sequenceLength)
         {
@@ -542,10 +584,9 @@ public class Trial6 : MonoBehaviour
         storage.rt = timer.ElapsedMilliseconds;
         storage.block = level;
         storage.srt_sequence_index = currentSequence;
-        storage.srt_trial_index = trial;
-        trial = trial + 1;
-        trials += 1;
-        HelloString(JsonUtility.ToJson(storage));
+        storage.srt_trial_index = totalTrials;
+        storage.experiment = cfig.Experiment;
+        Upload(JsonUtility.ToJson(storage));
         loading = false;
     }
 
@@ -553,7 +594,7 @@ public class Trial6 : MonoBehaviour
     {
         time.Stop();
         TrialData storage = new TrialData();
-        levelText.text = "Level " + level + " Complete!";
+        levelText.text = "Attempt " + level + " Complete!";
         storage.srt_input_pressed = keyPressed;
         storage.correct_input = answer;
         storage.was_input_correct = true;
@@ -561,16 +602,16 @@ public class Trial6 : MonoBehaviour
         storage.block = level;
         storage.srt_sequence_index = currentSequence;
         currentSequence = 1;
-        storage.srt_trial_index = trial;
-        trial = 1;
-        trials += 1;
-        HelloString(JsonUtility.ToJson(storage));
+        storage.srt_trial_index = totalTrials;
+        storage.experiment = cfig.Experiment;
+        Upload(JsonUtility.ToJson(storage));
+        totalTrials = totalTrials + 1;
         level++;
         running = false;
         SpeedUp.Play();
         totalTime = totalTime + timer.ElapsedMilliseconds;
         UnityEngine.Debug.Log(timer.ElapsedMilliseconds);
-        responseTime.text = "You completed the level in " + time.ElapsedMilliseconds / 1000f + " seconds" ;
+        responseTime.text = "You completed the attempt in " + time.ElapsedMilliseconds / 1000f + " seconds";
         if ((time.ElapsedMilliseconds < bestScore) || (bestScore == 0))
         {
             bestScore = time.ElapsedMilliseconds;
@@ -579,7 +620,7 @@ public class Trial6 : MonoBehaviour
         UnityEngine.Debug.Log(responseTime.text);
         if (level > cfig.Attempts)
         {
-            levelText.text = "All Levels Completed";
+            levelText.text = "All Attempts Completed";
         }
     }
 
@@ -590,13 +631,15 @@ public class Trial6 : MonoBehaviour
 
     void StartLevel()
     {
-        if (level <= cfig.Repetitions)
+        if (level <= cfig.Attempts)
         {
             StartCoroutine(startNextLevel());
         }
         else
         {
-            SceneManager.LoadScene(0);
+            //cam.enabled = false;
+            //ambience.Stop();
+            EndGame();
         }
     }
     IEnumerator begining()
@@ -618,20 +661,22 @@ public class Trial6 : MonoBehaviour
         loading = true;
         time.Start();
     }
-    
+
     IEnumerator startNextLevel()
     {
+        end = true;
+        car.transform.position = (shift[0].transform.position);
         time = new Stopwatch();
         scoreBox.text = ("Time: " + 0);
         endPanel.SetActive(false);
         Grammar(grammars);
         for (int j = 0; j < cfig.Pattern.Length; j++)
         {
-                Pattern.Push(cfig.Pattern[j]);
+            Pattern.Push(cfig.Pattern[j]);
         }
 
-        trials = Pattern.Count;
         answer = Pattern.Pop();
+        remaining.text = "Remaining: " + Pattern.Count;
         timer = new Stopwatch();
         sRender.sprite = sprites[1];
         sRender = carz[answer].GetComponent<SpriteRenderer>();
@@ -649,99 +694,14 @@ public class Trial6 : MonoBehaviour
         waiting = false;
         time.Start();
     }
-    /*IEnumerator Upload()
+    void grammar1()
     {
-        json = "]";
-        WWWForm form = new WWWForm();
-        WWWForm test = new WWWForm();
-        string[] myData = new string[inputPressed.Count];
-
-        int i = inputPressed.Count-1;
-        int k = 10;
-        while(inputPressed.Count != 0)
-        {
-            TrialData storage = new TrialData();
-            storage.trialIndex = i+1;
-            storage.sequenceIndex = sequenceInput.Pop();
-            storage.inputPressed = inputPressed.Pop();
-            storage.block = block.Pop();
-            storage.correctInput = correctInput.Pop() ;
-            storage.wasInputCorrect = wasInputCorrect.Pop();
-            storage.responseTimes = responseTimes.Pop();
-            inputPressed1.Push(storage.inputPressed);
-            correctInput1.Push(storage.correctInput);
-            wasInputCorrect1.Push(storage.wasInputCorrect);
-            responseTimes1.Push(storage.responseTimes);
-            sequenceInput1.Push(storage.sequenceIndex);
-            block1.Push(storage.block);
-            if (json == "]")
-            {
-                json = JsonUtility.ToJson(storage) + "\n" + json;
-            }
-            else
-            {
-                json = JsonUtility.ToJson(storage) + ",\n" + json;
-            }
-            i--;
-            k--;
-            if (k == 0)
-            {
-                k = 10;
-            }
-        }
-        json = "[" + json;
-        while (inputPressed1.Count != 0)
-        {
-            sequenceInput.Push(sequenceInput1.Pop());
-            inputPressed.Push(inputPressed1.Pop());
-            block.Push(block1.Pop());
-            correctInput.Push(correctInput1.Pop());
-            wasInputCorrect.Push(wasInputCorrect1.Pop());
-            responseTimes.Push(responseTimes1.Pop());
-
-        }
-
-
-        form.AddField("myData", json);
-        test.AddField("testData", 5);
-        string url = "http://jdeleeuw.vassarcis.net/SRT-Game/data.php";
-      
-        using (var www = UnityWebRequest.Post(url, form))
-        {
-            yield return www.SendWebRequest();
-
-            if (www.isNetworkError || www.isHttpError)
-            {
-                UnityEngine.Debug.Log(www.error);
-            }
-            else
-            {
-                UnityEngine.Debug.Log("Upload complete!");
-                UnityEngine.Debug.Log(www.downloadHandler.text);
-            }
-        }
-        using (var www = UnityWebRequest.Get("http://jdeleeuw.vassarcis.net/SRT-Game/data/mydatatest.txt"))
-        {
-            yield return www.SendWebRequest();
-
-            if (www.isNetworkError || www.isHttpError)
-            {
-                UnityEngine.Debug.Log(www.error);
-            }
-            else
-            {
-                if(www.downloadHandler.text == "5") { UnityEngine.Debug.Log("Data Recieved"); }
-            }
-        }
-    }*/
-void grammar1()
-    {
-       int startingNumber =  UnityEngine.Random.Range(0, lanes - 1);
+        int startingNumber = UnityEngine.Random.Range(0, lanes - 1);
         cfig.Pattern[lanes - 1] = startingNumber;
         int switcher = 0;
-        for(int i = cfig.Pattern.Length -1; i>=0; i--)
+        for (int i = cfig.Pattern.Length - 1; i >= 0; i--)
         {
-            if(startingNumber == 0)
+            if (startingNumber == 0)
             {
                 startingNumber = 1;
             }
@@ -755,7 +715,7 @@ void grammar1()
             }
             else if (startingNumber == 3)
             {
-                startingNumber = UnityEngine.Random.Range(4,6);
+                startingNumber = UnityEngine.Random.Range(4, 6);
             }
             else if (startingNumber == 4)
             {
@@ -862,7 +822,7 @@ void grammar1()
                 {
                     startingNumber = 5;
                 }
-                else if(switcher==1)
+                else if (switcher == 1)
                 {
                     startingNumber = 0;
                 }
@@ -884,7 +844,7 @@ void grammar1()
     {
         if (grammar == 1)
         {
-            grammar1();   
+            grammar1();
         }
         else if (grammar == 2)
         {
@@ -896,8 +856,5 @@ void grammar1()
         }
     }
 }
-
-
-
 
 

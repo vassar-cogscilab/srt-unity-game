@@ -221,7 +221,7 @@ public class Trial5 : MonoBehaviour
         {
             carz[i] = Sprite.Instantiate(obstacle1, obs) as GameObject;
             carz[i].transform.position = new Vector3((x1 * i) - (camWidth / 2f) + (x1 / 2), obs.position.y, -11);
-            carz[i].transform.localScale = new Vector3(3f / lanes, 3f / lanes, 1);
+            carz[i].transform.localScale = new Vector3(2.5f / lanes, 2.5f / lanes, 1);
             shift[i] = Sprite.Instantiate(Locations, shifts) as GameObject;
             shift[i].transform.position = new Vector3((x1 * i) - (camWidth / 2f) + (x1 / 2), -3, -10);
             sRender = shift[i].GetComponent<SpriteRenderer>();
@@ -247,7 +247,7 @@ public class Trial5 : MonoBehaviour
         carSpeed = maxSpeed;
         originalSpeed = 10;
         car.transform.position = (shift[keyPressed].transform.position);
-        car.transform.localScale = new Vector3(3f/ lanes, 3f / lanes, 1);
+        car.transform.localScale = new Vector3(2.5f/ lanes, 2.5f / lanes, 1);
         time = new Stopwatch();
     }
 
@@ -566,7 +566,8 @@ public class Trial5 : MonoBehaviour
         storage.block = level;
         storage.srt_sequence_index = currentSequence;
         storage.srt_trial_index = totalTrials;
-        //Upload(JsonUtility.ToJson(storage));
+        storage.experiment = cfig.Experiment;
+        Upload(JsonUtility.ToJson(storage));
         totalTrials = totalTrials + 1;
         currentSequence++;
         if (currentSequence > sequenceLength)
@@ -589,7 +590,8 @@ public class Trial5 : MonoBehaviour
         storage.block = level;
         storage.srt_sequence_index = currentSequence;
         storage.srt_trial_index = totalTrials;
-        //Upload(JsonUtility.ToJson(storage));
+        storage.experiment = cfig.Experiment;
+        Upload(JsonUtility.ToJson(storage));
         loading = false;
     }
 
@@ -606,6 +608,7 @@ public class Trial5 : MonoBehaviour
         storage.srt_sequence_index = currentSequence;
         currentSequence = 1;
         storage.srt_trial_index =  totalTrials;
+        storage.experiment = cfig.Experiment;
         Upload(JsonUtility.ToJson(storage));
         totalTrials = totalTrials + 1;
         level++;
@@ -639,8 +642,8 @@ public class Trial5 : MonoBehaviour
         }
         else
         {
-            cam.enabled = false;
-            ambience.Stop();
+            //cam.enabled = false;
+            //ambience.Stop();
             EndGame();
         }
     }
@@ -715,6 +718,7 @@ public class TrialData
     public int correct_input;
     public bool was_input_correct;
     public float rt;
+    public string experiment;
 }
 
 
