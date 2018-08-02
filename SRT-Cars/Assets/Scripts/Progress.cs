@@ -9,4 +9,5 @@ public class Progress : MonoBehaviour {
     public bool level4 = false;
     public bool level5 = false;
     public bool level6 = false;
+    public int attempts = 0;
 }

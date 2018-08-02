@@ -154,8 +154,8 @@ public class Experiment2 : MonoBehaviour
         maxSpeed = 16;
         midSpeed = 11;
         minSpeed = 2;
-        speedChange = 1f;
-        shiftSpeed = 40;
+        speedChange = .5f;
+        shiftSpeed = 100;
         obstacles.transform.position = startPoint.position;
         carz = new GameObject[lanes];
         shift = new GameObject[lanes];
@@ -228,8 +228,8 @@ public class Experiment2 : MonoBehaviour
 
 
         }
-        answer = Pattern.Pop();
         remaining.text = "Remaining: " + Pattern.Count;
+        answer = Pattern.Pop();
         timer = new Stopwatch();
         sRender = carz[answer].GetComponent<SpriteRenderer>();
         sRender.sprite = sprites[0];
@@ -288,8 +288,8 @@ public class Experiment2 : MonoBehaviour
                     waiting = false;
                     loading = true;
                     sRender.sprite = sprites[1];
-                    answer = Pattern.Pop();
                     remaining.text = "Remaining: " + Pattern.Count;
+                    answer = Pattern.Pop();
                     sRender = carz[answer].GetComponent<SpriteRenderer>();
                     sRender.sprite = sprites[0];
                     obstacles.transform.position = startPoint.position;
@@ -299,7 +299,7 @@ public class Experiment2 : MonoBehaviour
             {
                 if (obstacles.transform.position.y >= slowPoint.position.y)
                 {
-                    if (carSpeed < maxSpeed)
+                    if (carSpeed < midSpeed)
                     {
                         carSpeed += speedChange;
                     }
@@ -414,7 +414,7 @@ public class Experiment2 : MonoBehaviour
             {
                 if (obstacles.transform.position.y > slowPoint.position.y)
                 {
-                    if (carSpeed < maxSpeed)
+                    if (carSpeed < midSpeed)
                     {
                         carSpeed += speedChange;
                     }
@@ -675,8 +675,8 @@ public class Experiment2 : MonoBehaviour
             Pattern.Push(cfig.Pattern[j]);
         }
 
-        answer = Pattern.Pop();
         remaining.text = "Remaining: " + Pattern.Count;
+        answer = Pattern.Pop();
         timer = new Stopwatch();
         sRender.sprite = sprites[1];
         sRender = carz[answer].GetComponent<SpriteRenderer>();
@@ -696,7 +696,7 @@ public class Experiment2 : MonoBehaviour
     }
     void grammar1()
     {
-        int startingNumber = UnityEngine.Random.Range(0, lanes - 1);
+        int startingNumber = UnityEngine.Random.Range(0, lanes - 3);
         cfig.Pattern[lanes - 1] = startingNumber;
         int switcher = 0;
         for (int i = cfig.Pattern.Length - 1; i >= 0; i--)
@@ -739,7 +739,7 @@ public class Experiment2 : MonoBehaviour
     }
     void grammar2()
     {
-        int startingNumber = UnityEngine.Random.Range(0, lanes - 1);
+        int startingNumber = UnityEngine.Random.Range(0, lanes - 3);
         cfig.Pattern[lanes - 1] = startingNumber;
         int switcher = 0;
         for (int i = cfig.Pattern.Length - 1; i >= 0; i--)
@@ -782,7 +782,7 @@ public class Experiment2 : MonoBehaviour
     }
     void grammar3()
     {
-        int startingNumber = UnityEngine.Random.Range(0, lanes - 1);
+        int startingNumber = UnityEngine.Random.Range(0, lanes - 4);
         cfig.Pattern[lanes - 1] = startingNumber;
         int switcher = 0;
         for (int i = cfig.Pattern.Length - 1; i >= 0; i--)

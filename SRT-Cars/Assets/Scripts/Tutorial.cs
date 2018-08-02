@@ -80,7 +80,6 @@ public class Tutorial : MonoBehaviour
     private GameObject Tutorial4;
     private GameObject Tutorial5;
     private Button Continue1;
-    private Button Continue2;
     private Button Continue3;
     private Button Continue;
     private bool inputKey;
@@ -283,6 +282,9 @@ public class Tutorial : MonoBehaviour
             {
                 waiting = false;
                 restarting = true;
+                sRender.sprite = sprites[1];
+                sRender = carz[1].GetComponent<SpriteRenderer>();
+                sRender.sprite = sprites[0];
                 remaining.text = "Remaining: 0";
                 obstacles.transform.position = startPoint.position;
             }

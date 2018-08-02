@@ -90,7 +90,6 @@ public class Trial5 : MonoBehaviour
     private Quaternion right;
     private Quaternion left;
     private Quaternion center;
-    private AudioSource ambience;
     private int totalTrials;
 
 
@@ -99,7 +98,6 @@ public class Trial5 : MonoBehaviour
     private void Awake()
     {
         totalTrials = 1;
-        ambience = GameObject.Find("Ambience").GetComponent<AudioSource>();
         right = Quaternion.Euler(0, 0, -20);
         left = Quaternion.Euler(0, 0, 20);
         center = Quaternion.Euler(0, 0, 0);
@@ -153,7 +151,7 @@ public class Trial5 : MonoBehaviour
         maxSpeed = 16;
         midSpeed = 11;
         minSpeed = 2;
-        speedChange = 1f;
+        speedChange = .5f;
         shiftSpeed = 40;
         obstacles.transform.position = startPoint.position;
         carz = new GameObject[lanes];
@@ -165,9 +163,16 @@ public class Trial5 : MonoBehaviour
         sequenceLength = cfig.Pattern.Length;
         if (cfig.Random == true)
         {
+            int holder = 1;
+            int holder1 = holder;
             for (int i = 0; i<cfig.Repetitions; i++)
             {
-                Pattern.Push(UnityEngine.Random.Range(0, lanes));
+                while (holder == holder1)
+                {
+                    holder = UnityEngine.Random.Range(0, 4);
+                }
+                holder1 = holder;
+                Pattern.Push(holder);
             }
         }
         else
@@ -237,8 +242,8 @@ public class Trial5 : MonoBehaviour
 
 
         }
-        answer = Pattern.Pop();
         remaining.text = "Remaining: " + Pattern.Count;
+        answer = Pattern.Pop();
         timer = new Stopwatch();
         sRender = carz[answer].GetComponent<SpriteRenderer>();
         sRender.sprite = sprites[0];
@@ -297,8 +302,8 @@ public class Trial5 : MonoBehaviour
                     waiting = false;
                     loading = true;
                     sRender.sprite = sprites[1];
-                    answer = Pattern.Pop();
                     remaining.text = "Remaining: " + Pattern.Count;
+                    answer = Pattern.Pop();
                     sRender = carz[answer].GetComponent<SpriteRenderer>();
                     sRender.sprite = sprites[0];
                     obstacles.transform.position = startPoint.position;
@@ -308,7 +313,7 @@ public class Trial5 : MonoBehaviour
             {
                 if (obstacles.transform.position.y >= slowPoint.position.y)
                 {
-                    if (carSpeed < maxSpeed)
+                    if (carSpeed < midSpeed)
                     {
                         carSpeed += speedChange;
                     }
@@ -421,7 +426,7 @@ public class Trial5 : MonoBehaviour
             {
                 if (obstacles.transform.position.y > slowPoint.position.y)
                 {
-                    if (carSpeed < maxSpeed)
+                    if (carSpeed < midSpeed)
                     {
                         carSpeed += speedChange;
                     }
@@ -670,9 +675,16 @@ public class Trial5 : MonoBehaviour
         endPanel.SetActive(false);
         if (cfig.Random == true)
         {
-            for (int i = 0; i < cfig.Repetitions; i++)
+            int holder = 1;
+            int holder1 = holder;
+            for (int i = 0; i<cfig.Repetitions; i++)
             {
-                Pattern.Push(UnityEngine.Random.Range(0, lanes));
+                while (holder == holder1)
+                {
+                    holder = UnityEngine.Random.Range(0, 4);
+                }
+                holder1 = holder;
+                Pattern.Push(holder);
             }
         }
         else
@@ -685,9 +697,8 @@ public class Trial5 : MonoBehaviour
                 }
             }
         }
-
-        answer = Pattern.Pop();
         remaining.text = "Remaining: " + Pattern.Count;
+        answer = Pattern.Pop();
         timer = new Stopwatch();
         sRender.sprite = sprites[1];
         sRender = carz[answer].GetComponent<SpriteRenderer>();
