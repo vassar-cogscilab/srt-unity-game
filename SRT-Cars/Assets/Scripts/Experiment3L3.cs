@@ -8,7 +8,7 @@ using System;
 using UnityEngine.SceneManagement;
 using System.Runtime.InteropServices;
 
-public class Experiment3L2 : MonoBehaviour
+public class Experiment3L3 : MonoBehaviour
 {
     [DllImport("__Internal")]
     private static extern void Upload(string str);
@@ -135,7 +135,7 @@ public class Experiment3L2 : MonoBehaviour
         nextLevel = GameObject.Find("Next Level").GetComponent<Button>();
         EndTrial = GameObject.Find("EndTrial").GetComponent<Button>();
         EndTrial.onClick.AddListener(EndGame);
-        if(progress.attempts < 20)
+        if (progress.attempts < 20)
         {
             EndTrial.gameObject.SetActive(false);
         }
@@ -144,7 +144,8 @@ public class Experiment3L2 : MonoBehaviour
         levelText = GameObject.Find("levelnumber").GetComponent<Text>();
         //bestScoreText = GameObject.Find("Best Score").GetComponent<Text>();
         endPanel = GameObject.Find("EndScreen");
-        if (progress.level3 == false)
+        nextLevel.onClick.AddListener(EndGame);
+        if (progress.level4 == false)
         {
             nextLevel.gameObject.SetActive(false);
         }
@@ -673,7 +674,7 @@ public class Experiment3L2 : MonoBehaviour
         storage.correct_input = keyPressed;
         storage.was_input_correct = true;
         storage.rt = timer.ElapsedMilliseconds;
-        storage.block = progress.attempts; 
+        storage.block = progress.attempts;
         storage.srt_sequence_index = currentSequence;
         storage.srt_trial_index = totalTrials;
         storage.experiment = cfig.Experiment;
@@ -710,7 +711,7 @@ public class Experiment3L2 : MonoBehaviour
             storage.correct_input = answer;
             storage.was_input_correct = false;
             storage.rt = timer.ElapsedMilliseconds;
-            storage.block = progress.attempts; 
+            storage.block = progress.attempts;
             storage.srt_sequence_index = currentSequence;
             storage.srt_trial_index = totalTrials;
             storage.experiment = cfig.Experiment;
@@ -724,8 +725,8 @@ public class Experiment3L2 : MonoBehaviour
         time.Stop();
         if ((time.ElapsedMilliseconds) / 1000 < 26)
         {
-            levelText.text = "Level 3 Unlocked!";
-            progress.level3 = true;
+            levelText.text = "All Levels complete";
+            progress.level4 = true;
             nextLevel.gameObject.SetActive(true);
         }
         else
@@ -737,7 +738,7 @@ public class Experiment3L2 : MonoBehaviour
         storage.correct_input = answer;
         storage.was_input_correct = true;
         storage.rt = timer.ElapsedMilliseconds;
-        storage.block = progress.attempts; 
+        storage.block = progress.attempts;
         storage.srt_sequence_index = currentSequence;
         currentSequence = 1;
         storage.srt_trial_index = totalTrials;
