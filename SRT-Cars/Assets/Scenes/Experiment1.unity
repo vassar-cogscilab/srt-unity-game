@@ -2101,9 +2101,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Lanes: 4
   Pattern: 00000000010000000200000003000000010000000200000000000000020000000100000003000000
-  Repetitions: 1
+  Repetitions: 10
   Random: 0
-  Attempts: 2
+  Attempts: 8
   lanePressed: 00000000
   Experiment: 1-pattern
 --- !u!1 &1125944422

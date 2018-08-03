@@ -11,7 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Tutorial.unity
     guid: 8bfe9706ae6c5294bb6324d09a627f1f
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Experiment1.unity
     guid: d955508ff60adca43a732a0f21c85e41
   - enabled: 0
@@ -26,12 +26,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Experiment2G3.unity
     guid: df789158918795c468065ea27a5c9a4c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Experiment3L1.unity
     guid: b56dc4897c879d248b79b1441748ea10
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Experiment3L2.unity
     guid: ab2a9b52032cf2346bb606dd03fef1f2
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Experiment3L3.unity
     guid: 3a40ba8410354f046b46191d5dbb05ee
